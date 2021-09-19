@@ -1,0 +1,6 @@
+tests/AppletTest.java
+ tests.AppletTest
+tests/MyTests.java
+ tests.MyTests
+tests/BaseTest.java
+ tests.BaseTest
