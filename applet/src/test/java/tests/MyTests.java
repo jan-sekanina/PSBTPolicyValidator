@@ -17,13 +17,18 @@ public class MyTests extends BaseTest {
     final short UPLOAD_REQUEST = instructions.getUPLOAD_REQUEST();
     final short CLASS_PRINT = instructions.getCLASS_PRINT();
     final short PRINT = instructions.getPRINT();
-    public final String some_data = "I would like to let you know that there are some of the most extreme";
+    public final String some_data = "I would like to let you know that...";
 
     public MyTests() {
 
     }
 
 
+    /**
+     * maybe create new class for card management from the computer?
+     * @param data
+     * @throws Exception
+     */
     public void sendData(byte[] data) throws Exception {
         CommandAPDU cmd;
         ResponseAPDU rsp;
