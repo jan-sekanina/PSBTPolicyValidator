@@ -64,66 +64,12 @@ public class AppletTest extends BaseTest {
     @Test
     public void callMyTest() throws Exception {
         MyTests myTest = new MyTests();
-        //myTest.testToMakeMeRememberHowThisWorks();
-        myTest.sendData(("I amaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaa$$%$%$%$4ččřčřčš" +
-                "čřščřščřčšřščřščřšřščřčšřč" +
-                "řč so going to know how th" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaa$$%$%$%$4ččřčřčš" +
-                "čřščřščřčšřščřščřšřščřčšřč" +
-                "řč so going to know how th" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaa$$%$%$%$4ččřčřčš" +
-                "čřščřščřčšřščřščřšřščřčšřč" +
-                "řč so going to know how th" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaa$$%$%$%$4ččřčřčš" +
-                "čřščřščřčšřščřščřšřščřčšřč" +
-                "řč so going to know how th" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaa$$%$%$%$4ččřčřčš" +
-                "čřščřščřčšřščřščřšřščřčšřč" +
-                "řč so going to know how th" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaa$$%$%$%$4ččřčřčš" +
-                "čřščřščřčšřščřščřšřščřčšřč" +
-                "řč so going to know how th" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaaaaaaaaaaaaaaaaaa" +
-                "aaaaaaaaaa$$%$%$%$4ččřčřčš" +
-                "čřščřščřčšřščřščřšřščřčšřč" +
-                "řč so going to know how th" +
-                "is works if this isk4 real").getBytes(StandardCharsets.UTF_8));
+        //myTest.keyFillTest();
+        //myTest.valueFillTest();
+        //myTest.keyPairFillTest();
+        //myTest.generalFillMapTest();
+        myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction1));
+        //myTest.psbtFillTest();
+        //myTest.psbtFillSimpleTest();
     }
-
 }
