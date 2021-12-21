@@ -3,7 +3,7 @@ package applet;
 import javacard.framework.*;
 import javacard.security.RandomData;
 
-import java.util.Arrays;
+import java.util.Arrays; // this import won't be needed in applet itself
 
 public class MainApplet extends Applet implements MultiSelectable {
     /**
@@ -27,10 +27,11 @@ public class MainApplet extends Applet implements MultiSelectable {
     public MainApplet(byte[] buffer, short offset, byte length) {
         instructions = new AppletInstructions(); //move this to RAM smhw?
         psbt = new PSBT();
-        data = new byte[1024 * 16];
+        data = new byte[1024 * 16]; // set the maximum size of PSBT here
         myOffset = 0;
 
         random = RandomData.getInstance(RandomData.ALG_SECURE_RANDOM);
+
         register();
     }
 
@@ -48,18 +49,18 @@ public class MainApplet extends Applet implements MultiSelectable {
         }
 
         if (cla == instructions.CLASS_PSBT_UPLOAD && ins == instructions.INS_UPLOAD) {
-            System.out.print(Arrays.toString(data) + System.lineSeparator());
             Util.arrayCopyNonAtomic(apduBuffer, (short) 5, data, myOffset, (short) (lc & 0xff));
             System.out.print(Arrays.toString(data) + System.lineSeparator());
-            System.out.print("lc = " + (lc & 0xff) + System.lineSeparator());
-            System.out.print("myOffset = " + myOffset + System.lineSeparator());
             myOffset += (short) (lc & 0xff);
-            System.out.print("myOffset after += = " + myOffset + System.lineSeparator());
         }
 
         if (cla == instructions.CLASS_PSBT_UPLOAD && ins == instructions.INS_FINISH) {
             System.out.print(Arrays.toString(data));
-            psbt.fillUp(data);
+            try {
+                psbt.fillUp(data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

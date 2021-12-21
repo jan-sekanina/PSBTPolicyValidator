@@ -33,10 +33,13 @@ public class MyUpload extends BaseTest {
         ResponseAPDU rsp;
         short packetSize;
         cmd = new CommandAPDU(CLASS_UPLOAD_PSBT, INS_REQUEST, 0, 0); // p1 = num of inputs, p2 = num of outputs
+
         CardManager manager = connect();
         rsp = manager.transmit(cmd);
         assert rsp.getSW() == 0x9000;
+
         packetSize = instructions.PACKET_BUFFER_SIZE;
+
         int offset = 0;
         while (offset + packetSize < data.length) {
             cmd = new CommandAPDU(CLASS_UPLOAD_PSBT, INS_UPLOAD, 0, 0, data, offset, packetSize, 0);

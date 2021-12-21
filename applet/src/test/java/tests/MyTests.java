@@ -54,12 +54,12 @@ public class MyTests {
         assert map.keyPairs[0].value.valueLen == 2;
     }
 
-    void psbtFillTest() {
+    void psbtFillTest() throws Exception {
         PSBT psbt = new PSBT();
         psbt.fillUp(fromHex(TransactionsImported.validTransaction1));
     }
 
-    void psbtFillSimpleTest() {
+    void psbtFillSimpleTest() throws Exception {
         PSBT psbt = new PSBT();
 
         byte[] data = fromHex("1122334455" + "05" + "0a" + "05060709" + "02" + "0000"+ "05" + "0a" + "05060709" + "02" + "0000" +

@@ -1,8 +1,8 @@
 package applet;
 
 public class GlobalMap extends GeneralMap {
-    short numOfInputMaps = -1;
-    short numOfOutputMaps = -1;
+    Short numOfInputMaps = null;
+    Short numOfOutputMaps = null;
     PGU_TX_keypair fancyKeyPairInfo = new PGU_TX_keypair();
 
     public void fillUp(short arrayIndex, byte[] data) {
@@ -14,20 +14,18 @@ public class GlobalMap extends GeneralMap {
             }
 
             if (keyPairs[currentKeyPair].key.keyType == 0x04) { // PSBT_GLOBAL_INPUT_COUNT = 0x04
-                numOfInputMaps = keyPairs[currentKeyPair].value.getByte((short) 0);
+                numOfInputMaps = (short) keyPairs[currentKeyPair].value.getByte((short) 0);
             }
 
             if (keyPairs[currentKeyPair].key.keyType == 0x05) { // PSBT_GLOBAL_OUTPUT_COUNT = 0x05
-                numOfOutputMaps = keyPairs[currentKeyPair].value.getByte((short) 0);
+                numOfOutputMaps = (short) keyPairs[currentKeyPair].value.getByte((short) 0);
             }
             mapSize += keyPairs[currentKeyPair].getSize();
             currentKeyPair++;
         }
-        System.out.print("inputCount: " + fancyKeyPairInfo.inputCount + System.lineSeparator());
-        System.out.print("outputCount: " + fancyKeyPairInfo.outputCount + System.lineSeparator());
-        //assert fancyKeyPair.outputCount == numOfOutputMaps;
-        //assert fancyKeyPair.inputCount == numOfInputMaps;
-        //assert numOfInputMaps != -1;
-        //assert numOfOutputMaps != -1;
+        System.out.print("numOfInputMap in fancyKeyPair: " + fancyKeyPairInfo.inputCount + System.lineSeparator());
+        System.out.print("numOfOutputMap in fancyKeyPair: " + fancyKeyPairInfo.outputCount + System.lineSeparator());
+        System.out.print("numOfInputMap: " + numOfInputMaps + System.lineSeparator());
+        System.out.print("numOfOutputMaps: " + numOfOutputMaps + System.lineSeparator());
     }
 }

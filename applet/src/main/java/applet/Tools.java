@@ -13,4 +13,11 @@ public class Tools {
         }
         return (short) (data[intStart] & 0xff);
     }
+
+    public static short byteSizeOfCWI(short CWI) {
+        if (CWI < 0xfd) {
+            return 1;
+        }
+        return 3;
+    }
 }
