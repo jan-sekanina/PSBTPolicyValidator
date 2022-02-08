@@ -1,20 +1,20 @@
+applet/KeyPair.java
+ applet.KeyPair
+applet/Value.java
+ applet.Value
+applet/GlobalMap.java
+ applet.GlobalMap
+applet/PGU_TX_keypair.java
+ applet.PGU_TX_keypair
+applet/GeneralMap.java
+ applet.GeneralMap
 applet/AppletInstructions.java
  applet.AppletInstructions
 applet/Tools.java
  applet.Tools
-applet/Value.java
- applet.Value
 applet/Key.java
  applet.Key
-applet/KeyPair.java
- applet.KeyPair
-applet/GeneralMap.java
- applet.GeneralMap
-applet/GlobalMap.java
- applet.GlobalMap
 applet/PSBT.java
  applet.PSBT
-applet/PGU_TX_keypair.java
- applet.PGU_TX_keypair
 applet/MainApplet.java
  applet.MainApplet

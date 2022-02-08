@@ -1,7 +1,7 @@
 package applet;
 
 public class PSBT {
-    short MAX_OF_IO_MAPS = 256;
+    short MAX_OF_IO_MAPS = 64;
     public GlobalMap globalMap = new GlobalMap();
     public GeneralMap[] inputMaps = new GeneralMap[MAX_OF_IO_MAPS];
     public GeneralMap[] outputMaps = new GeneralMap[MAX_OF_IO_MAPS];
@@ -31,6 +31,7 @@ public class PSBT {
          **/
 
          if ((data[0] == 0x70) && (data[1] == 0x73) && (data[2] == 0x62) && (data[3] == 0x74) && (data[4] == (data[4] & 0xff))){
+             // i dont think this is right
             throw new Exception("Unsupported (black and forbidden) magic!");
          }
 
@@ -41,8 +42,6 @@ public class PSBT {
         globalMap.fillUp((short) 5, data);
 
         byteSize += globalMap.mapSize;
-
-        System.out.print(data[byteSize] + System.lineSeparator());
 
         assert data[byteSize] == 0x00;
         byteSize++;

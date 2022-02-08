@@ -1,10 +1,10 @@
-tests/BaseTest.java
- tests.BaseTest
+tests/MyUpload.java
+ tests.MyUpload
 tests/TransactionsImported.java
  tests.TransactionsImported
 tests/AppletTest.java
  tests.AppletTest
-tests/MyUpload.java
- tests.MyUpload
 tests/MyTests.java
  tests.MyTests
+tests/BaseTest.java
+ tests.BaseTest

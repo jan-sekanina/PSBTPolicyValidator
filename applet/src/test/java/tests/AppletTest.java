@@ -64,11 +64,11 @@ public class AppletTest extends BaseTest {
     @Test
     public void callMyTest() throws Exception {
         MyTests myTest = new MyTests();
-        myTest.keyFillTest();
-        myTest.valueFillTest();
-        myTest.keyPairFillTest();
-        myTest.generalFillMapTest();
-        //myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction1));
+        //myTest.keyFillTest();
+        //myTest.valueFillTest();
+        //myTest.keyPairFillTest();
+        //myTest.generalFillMapTest();
+        myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction1));
         //myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction2));
         //myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction3));
         //myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction4));
