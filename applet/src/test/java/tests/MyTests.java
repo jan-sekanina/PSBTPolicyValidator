@@ -69,6 +69,6 @@ public class MyTests {
 
     void sendDataTest(byte[] data) throws Exception {
         MyUpload mu = new MyUpload();
-        mu.sendData(data);
+        mu.sendData(data, (byte) AppletInstructions.CLASS_PSBT_UPLOAD);
     }
 }

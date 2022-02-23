@@ -28,11 +28,11 @@ public class MyUpload extends BaseTest {
      * @throws Exception
      */
 
-    public void sendData(byte[] data) throws Exception {
+    public void sendData(byte[] data, byte classUpload) throws Exception {
         CommandAPDU cmd;
         ResponseAPDU rsp;
         short packetSize;
-        cmd = new CommandAPDU(CLASS_UPLOAD_PSBT, INS_REQUEST, 0, 0); // p1 = num of inputs, p2 = num of outputs
+        cmd = new CommandAPDU(classUpload, INS_REQUEST, 0, 0); // p1 = num of inputs, p2 = num of outputs
 
         CardManager manager = connect();
         rsp = manager.transmit(cmd);
@@ -42,17 +42,17 @@ public class MyUpload extends BaseTest {
 
         int offset = 0;
         while (offset + packetSize < data.length) {
-            cmd = new CommandAPDU(CLASS_UPLOAD_PSBT, INS_UPLOAD, 0, 0, data, offset, packetSize, 0);
+            cmd = new CommandAPDU(classUpload, INS_UPLOAD, 0, 0, data, offset, packetSize, 0);
             rsp = manager.transmit(cmd);
             assert rsp.getSW() == 0x9000;
             offset += packetSize;
         }
 
-        cmd = new CommandAPDU(CLASS_UPLOAD_PSBT, INS_UPLOAD, 0, 0, data, offset, data.length - offset);
+        cmd = new CommandAPDU(classUpload, INS_UPLOAD, 0, 0, data, offset, data.length - offset);
         rsp = manager.transmit(cmd);
         assert rsp.getSW() == 0x9000;
 
-        cmd = new CommandAPDU(CLASS_UPLOAD_PSBT, INS_FINISH, 0, 0);
+        cmd = new CommandAPDU(classUpload, INS_FINISH, 0, 0);
         rsp = manager.transmit(cmd);
         assert rsp.getSW() == 0x9000;
 

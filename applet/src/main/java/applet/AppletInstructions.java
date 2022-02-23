@@ -22,12 +22,14 @@ public class AppletInstructions {
 
     /**
      * all data are uploaded with this class at the moment, that will probably change in the future
-     * where I plan to create different upload class for PSBT transaction and different class for
+     * when I plan to create different upload class for PSBT transaction and different class for
      * applet initialization
      */
 
 
-    public final short CLASS_PSBT_UPLOAD = 0;
+    public static final short CLASS_PSBT_UPLOAD = 0;
+    public static final short CLASS_POLICY_UPLOAD = 1;
+    public static final short CLASS_SECRETandTIME_UPLOAD = 2; // p1 will determine reference, where to store it
 
     public final short INS_REQUEST = 0;
     public final short INS_UPLOAD = 1;

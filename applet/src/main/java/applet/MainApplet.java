@@ -44,22 +44,54 @@ public class MainApplet extends Applet implements MultiSelectable {
         short p2 = apduBuffer[ISO7816.OFFSET_P2];
         short dataOffset = apduBuffer[ISO7816.OFFSET_CDATA];
 
-        if (cla == instructions.CLASS_PSBT_UPLOAD && ins == instructions.INS_REQUEST) {
-            //good
-        }
+        /**
+         * this uploads PSBT
+         */
+        if (cla == AppletInstructions.CLASS_PSBT_UPLOAD) {
+            if (ins == instructions.INS_REQUEST) {
+                //good
+            }
+            if (ins == instructions.INS_UPLOAD){
+                Util.arrayCopyNonAtomic(apduBuffer, (short) 5, data, myOffset, (short) (lc & 0xff));
+                System.out.print(Arrays.toString(data) + System.lineSeparator());
+                myOffset += (short) (lc & 0xff);
+            }
+            if (ins == instructions.INS_FINISH){
 
-        if (cla == instructions.CLASS_PSBT_UPLOAD && ins == instructions.INS_UPLOAD) {
-            Util.arrayCopyNonAtomic(apduBuffer, (short) 5, data, myOffset, (short) (lc & 0xff));
-            System.out.print(Arrays.toString(data) + System.lineSeparator());
-            myOffset += (short) (lc & 0xff);
+                System.out.print(Arrays.toString(data));
+                try {
+                    psbt.fillUp(data);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
-
-        if (cla == instructions.CLASS_PSBT_UPLOAD && ins == instructions.INS_FINISH) {
-            System.out.print(Arrays.toString(data));
-            try {
-                psbt.fillUp(data);
-            } catch (Exception e) {
-                e.printStackTrace();
+        /**
+         * this uploads Policy represented as array of bytes
+         */
+        if (cla == AppletInstructions.CLASS_POLICY_UPLOAD) {
+            if (ins == instructions.INS_REQUEST){
+                //do smth here
+            }
+            if (ins == instructions.INS_UPLOAD){
+                //do smth here
+            }
+            if (ins == instructions.INS_FINISH){
+                //do smth here
+            }
+        }
+        /**
+         * this uploads data(secrets and time signed by authority) for Policy
+         */
+        if (cla == AppletInstructions.CLASS_SECRETandTIME_UPLOAD) {
+            if (ins == instructions.INS_REQUEST){
+                //do smth here
+            }
+            if (ins == instructions.INS_UPLOAD){
+                //do smth here
+            }
+            if (ins == instructions.INS_FINISH){
+                //do smth here
             }
         }
     }
