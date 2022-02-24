@@ -6,13 +6,14 @@ import javacard.security.RandomData;
 import java.util.Arrays; // this import won't be needed in applet itself
 
 public class MainApplet extends Applet implements MultiSelectable {
+    public static final short MAX_SIZE_OF_PSBT = 1024 * 6;
     /**
      * class of all instructions and other hardcoded information
      */
     AppletInstructions instructions = new AppletInstructions(); //move this to RAM smhw?
 
     public PSBT psbt;
-    public byte[] data;
+    public static byte[] PSBTdata;
     short myOffset;
 
     //private byte[] data = JCSystem.makeTransientByteArray((short) (1024 * 10),
@@ -27,7 +28,7 @@ public class MainApplet extends Applet implements MultiSelectable {
     public MainApplet(byte[] buffer, short offset, byte length) {
         instructions = new AppletInstructions(); //move this to RAM smhw?
         psbt = new PSBT();
-        data = new byte[1024 * 16]; // set the maximum size of PSBT here
+        PSBTdata = new byte[MAX_SIZE_OF_PSBT]; // set the maximum size of PSBT here
         myOffset = 0;
 
         random = RandomData.getInstance(RandomData.ALG_SECURE_RANDOM);
@@ -52,15 +53,15 @@ public class MainApplet extends Applet implements MultiSelectable {
                 //good
             }
             if (ins == instructions.INS_UPLOAD){
-                Util.arrayCopyNonAtomic(apduBuffer, (short) 5, data, myOffset, (short) (lc & 0xff));
-                System.out.print(Arrays.toString(data) + System.lineSeparator());
+                Util.arrayCopyNonAtomic(apduBuffer, (short) 5, PSBTdata, myOffset, (short) (lc & 0xff));
+                System.out.print(Arrays.toString(PSBTdata) + System.lineSeparator());
                 myOffset += (short) (lc & 0xff);
             }
             if (ins == instructions.INS_FINISH){
 
-                System.out.print(Arrays.toString(data));
+                System.out.print(Arrays.toString(PSBTdata));
                 try {
-                    psbt.fillUp(data);
+                    psbt.fill();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

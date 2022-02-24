@@ -36,14 +36,14 @@ public class AppletInstructions {
     public final short INS_FINISH = 2;
 
     //global keytype bytes below
-    public final byte PSBT_GLOBAL_UNSIGNED_TX = 0x00;
-    public final byte PSBT_GLOBAL_XPUB = 0x01;
-    public final byte PSBT_GLOBAL_TX_VERSION = 0x02;
-    public final byte PSBT_GLOBAL_FALLBACK_LOCKTIME = 0x03;
-    public final byte PSBT_GLOBAL_INPUT_COUNT = 0x04;
-    public final byte PSBT_GLOBAL_OUTPUT_COUNT = 0x05;
-    public final byte PSBT_GLOBAL_TX_MODIFIABLE = 0x06;
-    public final byte PSBT_GLOBAL_SIGHASH_SINGLE_INPUTS = 0x07;
-    public final byte PSBT_GLOBAL_VERSION = (byte) 0xFB;
-    public final byte PSBT_GLOBAL_PROPRIETARY = (byte) 0xFC;
+    public static final byte PSBT_GLOBAL_UNSIGNED_TX = 0x00;
+    public static final byte PSBT_GLOBAL_XPUB = 0x01;
+    public static final byte PSBT_GLOBAL_TX_VERSION = 0x02;
+    public static final byte PSBT_GLOBAL_FALLBACK_LOCKTIME = 0x03;
+    public static final byte PSBT_GLOBAL_INPUT_COUNT = 0x04;
+    public static final byte PSBT_GLOBAL_OUTPUT_COUNT = 0x05;
+    public static final byte PSBT_GLOBAL_TX_MODIFIABLE = 0x06;
+    public static final byte PSBT_GLOBAL_SIGHASH_SINGLE_INPUTS = 0x07;
+    public static final byte PSBT_GLOBAL_VERSION = (byte) 0xFB;
+    public static final byte PSBT_GLOBAL_PROPRIETARY = (byte) 0xFC;
 }

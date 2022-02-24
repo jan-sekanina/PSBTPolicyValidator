@@ -1,21 +1,19 @@
 package applet;
 
+//TODO delete this class
 public class PGU_TX_keypair extends KeyPair {
-    Short inputCount = null;
-    Short outputCount = null;
-
-    public void fillUp(short arrayIndex, byte[] data) {
-        key.fillUp(arrayIndex, data);
+    public void fill(short arrayIndex) {
+        key.fill(arrayIndex);
         System.out.print("arrayIndex after keyfillup: " + arrayIndex + System.lineSeparator());
-        value.fillUp((short) (arrayIndex + key.getSize()), data);
+        value.fill((short) (arrayIndex + key.getSize()));
         System.out.print("arrayIndex after valueFillup: " + (arrayIndex + key.getSize()) + System.lineSeparator());
-        inputCount = getInputCount();
-        outputCount = getOutputCount(inputCount);
+        //inputCount = getInputCount();
+        //outputCount = getOutputCount(inputCount);
     }
 
     short getInputCount() {
-        System.out.print("inputCounto: " + Tools.compactWeirdoInt((short) (value.start + 4), value.data) + System.lineSeparator());
-        return Tools.compactWeirdoInt((short) (value.start + 4), value.data);
+        System.out.print("inputCounto: " + Tools.compactWeirdoInt((short) (value.start + 4)) + System.lineSeparator());
+        return Tools.compactWeirdoInt((short) (value.start + 4));
     }
 
     short getOutputCount(short inputCount) {
@@ -25,11 +23,11 @@ public class PGU_TX_keypair extends KeyPair {
             bytesToIgnore += ignoreInput(bytesToIgnore);
             i++;
         }
-        return Tools.compactWeirdoInt(bytesToIgnore, value.data);
+        return Tools.compactWeirdoInt(bytesToIgnore);
     }
 
     short ignoreInput(short bytesIgnored) {
-        short signature_scrip_size = Tools.compactWeirdoInt((short) (bytesIgnored + 36), value.data);
+        short signature_scrip_size = Tools.compactWeirdoInt((short) (bytesIgnored + 36));
         System.out.print("signature_script_size = " + signature_scrip_size + System.lineSeparator());
         return (short) (signature_scrip_size + 40 + Tools.byteSizeOfCWI(signature_scrip_size));
 

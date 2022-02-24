@@ -2,8 +2,6 @@ package tests;
 
 import applet.*;
 
-import java.util.Arrays;
-
 public class MyTests {
 
     MyUpload test = new MyUpload();
@@ -23,7 +21,7 @@ public class MyTests {
     void keyFillTest() {
         byte[] data = fromHex("05" + "0a" + "11111111");
         Key key = new Key();
-        key.fillUp((short) 0, data);
+        key.fill((short) 0);
         assert key.keyLen == 5;
         assert key.keyType == 10;
     }
@@ -31,14 +29,14 @@ public class MyTests {
     void valueFillTest() {
         byte[] data = fromHex("02" + "0000");
         Value value = new Value();
-        value.fillUp((short) 0, data);
+        value.fill((short) 0);
         assert value.valueLen == 2;
     }
 
     void keyPairFillTest() {
         byte[] data = fromHex("05" + "0a" + "11111111" + "02" + "0000");
         KeyPair keyPair = new KeyPair();
-        keyPair.fillUp((short) 0, data);
+        keyPair.fill((short) 0);
         assert keyPair.key.keyLen == 5;
         assert keyPair.key.keyType == 10;
         assert keyPair.value.valueLen == 2;
@@ -48,7 +46,7 @@ public class MyTests {
         byte[] data = fromHex("05" + "0a" + "11111111" + "02" + "0000"+ "00" +
                 "05" + "0a" + "11111111" + "02" + "0000"+ "00");
         GeneralMap map = new GeneralMap();
-        map.fillUp((short) 0, data);
+        map.fillUp((short) 0);
         assert map.keyPairs[0].key.keyLen == 5;
         assert map.keyPairs[0].key.keyType == 10;
         assert map.keyPairs[0].value.valueLen == 2;
@@ -56,7 +54,7 @@ public class MyTests {
 
     void psbtFillTest() throws Exception {
         PSBT psbt = new PSBT();
-        psbt.fillUp(fromHex(TransactionsImported.validTransaction1));
+        //psbt.fill(fromHex(TransactionsImported.validTransaction1));
     }
 
     void psbtFillSimpleTest() throws Exception {
@@ -64,7 +62,7 @@ public class MyTests {
 
         byte[] data = fromHex("1122334455" + "05" + "0a" + "05060709" + "02" + "0000"+ "05" + "0a" + "05060709" + "02" + "0000" +
                 "05" + "0a" + "01020304" + "02" + "0000"+ "00");
-        psbt.fillUp(data);
+        //psbt.fill(data);
     }
 
     void sendDataTest(byte[] data) throws Exception {
