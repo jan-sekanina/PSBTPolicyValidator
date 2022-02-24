@@ -20,7 +20,6 @@ public class GlobalMap extends GeneralMap {
                 globalUnsignedTX.fill((short) (arrayIndex + mapSize + 2 +
                         keyPairs[currentKeyPair].value.valueLenBytes));
                 assert globalUnsignedTX.size == keyPairs[currentKeyPair].value.valueLen;
-                //fancyKeyPairInfo.fill((short) (arrayIndex + mapSize));
             }
 
             if (keyPairs[currentKeyPair].key.keyType == PSBT_GLOBAL_INPUT_COUNT) {
