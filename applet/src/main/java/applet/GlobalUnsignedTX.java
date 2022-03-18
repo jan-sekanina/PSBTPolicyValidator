@@ -16,11 +16,9 @@ public class GlobalUnsignedTX {
     short size = 0;
 
     Short inputCount = null;
-    short currentInput = -1;
     GlobalUnsignedTXInput[] inputs = new GlobalUnsignedTXInput[MAX_COUNT_OF_IO];
 
     Short outputCount = null;
-    short currentOutput = -1;
     GlobalUnsignedTXOutput[] outputs = new GlobalUnsignedTXOutput[MAX_COUNT_OF_IO];
 
     Short lockTimeStart = null;
@@ -35,29 +33,41 @@ public class GlobalUnsignedTX {
     public void fill(short arrayIndex){
         start = arrayIndex;
         version = (short) PSBTdata[start];
-        inputCount = getInputCount();
+        size += 4;
+        inputCount = getCount();
+        size += byteSizeOfCWI(inputCount);
 
-        while (currentInput < inputCount - 1){
-            currentInput++;
-            inputs[currentInput].fill((short) (start + size));
-            size += inputs[currentInput].size;
+        assert (inputCount) <= MAX_COUNT_OF_IO;
+
+        for (short i = 0; i < inputCount; i++) {
+            inputs[i].fill((short) (start + size));
+            size += inputs[i].size;
         }
 
-        outputCount = getOutputCount();
+        outputCount = getCount();
+        assert outputCount <= MAX_COUNT_OF_IO;
         size += byteSizeOfCWI(outputCount);
 
-        while (currentOutput < outputCount - 1){
-            currentOutput++;
-            outputs[currentOutput].fill((short)(start + size));
-            size += outputs[currentOutput].size;
+        for (short i = 0; i < outputCount; i++) {
+            outputs[i].fill((short)(start + size));
+            size += outputs[i].size;
         }
-
+        lockTimeStart = size;
+        size += 4;
+        print();
     }
-    short getInputCount() {
-        return compactWeirdoInt((short) (start + 4));
-    }
-    short getOutputCount() {
+    short getCount() {
         return compactWeirdoInt((short) (start + size));
+    }
+
+    void print(){
+        System.out.print(("RAW TRANSACTION:" + System.lineSeparator()));
+        System.out.print("starts at: " + start + System.lineSeparator());
+        System.out.print("version: " + version + System.lineSeparator());
+        System.out.print("size: " + size + System.lineSeparator());
+        System.out.print("input count: " + inputCount + System.lineSeparator());
+        System.out.print("output count: " + outputCount + System.lineSeparator());
+        System.out.print("lockTimeStart: " + lockTimeStart + System.lineSeparator());
     }
 
     short ignoreInput(short bytesIgnored) {

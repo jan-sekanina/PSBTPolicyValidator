@@ -19,4 +19,13 @@ public class GlobalUnsignedTXInput {
         sequenceStart = (short) (scriptSigStart + scriptSize);
         size = (short) (36 + byteSizeOfCWI(scriptSize) + scriptSize + 4); // easier to read and understand this way
     }
+
+    void print() {
+        System.out.print("previousOutputStart: " + previousOutputStart + System.lineSeparator());
+        System.out.print("scriptSizeStart: " + scriptSigStart + System.lineSeparator());
+        System.out.print("scriptSize: " + scriptSize + System.lineSeparator());
+        System.out.print("scriptSigStart: " + scriptSigStart + System.lineSeparator());
+        System.out.print("sequenceStart: " + sequenceStart + System.lineSeparator());
+        System.out.print("size: " + size + System.lineSeparator());
+    }
 }

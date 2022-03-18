@@ -6,7 +6,7 @@ public class MyTests {
 
     MyUpload test = new MyUpload();
 
-    byte[] fromHex(String hex){
+    static byte[] fromHex(String hex){
         // ukradeno
         byte[] res = new byte[hex.length() / 2];
 

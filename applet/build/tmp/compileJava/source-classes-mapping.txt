@@ -4,29 +4,27 @@ applet/Key.java
  applet.Key
 applet/Value.java
  applet.Value
-applet/PGU_TX_keypair.java
- applet.PGU_TX_keypair
-applet/AppletInstructions.java
- applet.AppletInstructions
 applet/GeneralMap.java
  applet.GeneralMap
+applet/AppletInstructions.java
+ applet.AppletInstructions
 applet/SekripkInstructions.java
  applet.SekripkInstructions
 applet/KeyPair.java
  applet.KeyPair
-applet/GlobalMap.java
- applet.GlobalMap
+applet/SecretAndTimeStorage.java
+ applet.SecretAndTimeStorage
 applet/GlobalUnsignedTX.java
  applet.GlobalUnsignedTX
-applet/PSBT.java
- applet.PSBT
+applet/GlobalUnsignedTXOutput.java
+ applet.GlobalUnsignedTXOutput
 applet/GlobalUnsignedTXInput.java
  applet.GlobalUnsignedTXInput
 applet/Policy.java
  applet.Policy
-applet/SecretAndTimeStorage.java
- applet.SecretAndTimeStorage
-applet/GlobalUnsignedTXOutput.java
- applet.GlobalUnsignedTXOutput
+applet/GlobalMap.java
+ applet.GlobalMap
+applet/PSBT.java
+ applet.PSBT
 applet/MainApplet.java
  applet.MainApplet

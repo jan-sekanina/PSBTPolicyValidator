@@ -27,11 +27,8 @@ public class Tools {
     public static short compactWeirdoInt(short intStart) {
         assert (PSBTdata[intStart] & 0xff) <= 0xfd;
         if ((short) (PSBTdata[intStart] & 0xff) == 0xfd) {
-            System.out.print("CWI returns " + (Tools.toShort(PSBTdata[intStart + 1],
-                    PSBTdata[intStart + 2])) + System.lineSeparator());
             return (Tools.toShort(PSBTdata[intStart + 1], PSBTdata[intStart + 2]));
         }
-        System.out.print("CWI returns " + (short) (PSBTdata[intStart] & 0xff) + System.lineSeparator());
         return (short) (PSBTdata[intStart] & 0xff);
     }
 

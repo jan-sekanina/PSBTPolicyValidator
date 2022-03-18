@@ -69,9 +69,9 @@ public class AppletTest extends BaseTest {
         //myTest.keyPairFillTest();
         //myTest.generalFillMapTest();
         myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction1));
-        //myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction2));
-        //myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction3));
-        //myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction4));
+        myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction2));
+        myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction3));
+        myTest.sendDataTest(myTest.fromHex(TransactionsImported.validTransaction4));
         //myTest.psbtFillTest();
         //myTest.psbtFillSimpleTest();
     }
