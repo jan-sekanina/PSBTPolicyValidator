@@ -10,6 +10,7 @@ public class Tools {
      * @param first firsth byte
      * @return
      */
+
     public static short toShort(byte zero, byte first) {
         System.out.print("toShort returns: " + (short) ((zero & 0xff) * 256 + (first & 0xff))
                 + System.lineSeparator());
@@ -21,15 +22,15 @@ public class Tools {
      * compactSizeInt encoded in Little Endian of max size short
      * more documentation here:
      * https://en.bitcoin.it/wiki/Protocol_documentation#Variable_length_integer
-     * @param intStart index in psbt data from where get the Int
+     * @param int_start index in psbt data from where get the Int
      * @return converted short
      */
-    public static short compactWeirdoInt(short intStart) {
-        assert (PSBTdata[intStart] & 0xff) <= 0xfd;
-        if ((short) (PSBTdata[intStart] & 0xff) == 0xfd) {
-            return (Tools.toShort(PSBTdata[intStart + 1], PSBTdata[intStart + 2]));
+    public static short compactWeirdoInt(short int_start) {
+        assert (PSBTdata[int_start] & 0xff) <= 0xfd;
+        if ((short) (PSBTdata[int_start] & 0xff) == 0xfd) {
+            return (Tools.toShort(PSBTdata[int_start + 1], PSBTdata[int_start + 2]));
         }
-        return (short) (PSBTdata[intStart] & 0xff);
+        return (short) (PSBTdata[int_start] & 0xff);
     }
 
     public static short byteSizeOfCWI(short CWI) {

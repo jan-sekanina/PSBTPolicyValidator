@@ -1,8 +1,8 @@
 package applet;
 
 public class SecretAndTimeStorage {
-    byte[] oneSecretMaxNow = new byte[256];
-    byte[] oneTimeMaxNow = new byte[256];
+    byte[] one_secret_max_now = new byte[256];
+    byte[] one_time_max_now = new byte[256];
 
     /**
      *

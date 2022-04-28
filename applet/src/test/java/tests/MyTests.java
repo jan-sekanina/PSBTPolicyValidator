@@ -1,10 +1,15 @@
 package tests;
 
 import applet.*;
+import cz.muni.fi.crocs.rcard.client.CardManager;
+import applet.AppletInstructions.*;
+
+import javax.smartcardio.CommandAPDU;
+import javax.smartcardio.ResponseAPDU;
 
 public class MyTests {
 
-    MyUpload test = new MyUpload();
+    Upload test = new Upload();
 
     static byte[] fromHex(String hex){
         // ukradeno
@@ -22,24 +27,24 @@ public class MyTests {
         byte[] data = fromHex("05" + "0a" + "11111111");
         Key key = new Key();
         key.fill((short) 0);
-        assert key.keyLen == 5;
-        assert key.keyType == 10;
+        assert key.key_len == 5;
+        assert key.key_type == 10;
     }
 
     void valueFillTest() {
         byte[] data = fromHex("02" + "0000");
         Value value = new Value();
         value.fill((short) 0);
-        assert value.valueLen == 2;
+        assert value.value_len == 2;
     }
 
     void keyPairFillTest() {
         byte[] data = fromHex("05" + "0a" + "11111111" + "02" + "0000");
         KeyPair keyPair = new KeyPair();
         keyPair.fill((short) 0);
-        assert keyPair.key.keyLen == 5;
-        assert keyPair.key.keyType == 10;
-        assert keyPair.value.valueLen == 2;
+        assert keyPair.key.key_len == 5;
+        assert keyPair.key.key_type == 10;
+        assert keyPair.value.value_len == 2;
     }
 
     void generalFillMapTest() {
@@ -47,9 +52,9 @@ public class MyTests {
                 "05" + "0a" + "11111111" + "02" + "0000"+ "00");
         GeneralMap map = new GeneralMap();
         map.fillUp((short) 0);
-        assert map.keyPairs[0].key.keyLen == 5;
-        assert map.keyPairs[0].key.keyType == 10;
-        assert map.keyPairs[0].value.valueLen == 2;
+        assert map.key_pairs[0].key.key_len == 5;
+        assert map.key_pairs[0].key.key_type == 10;
+        assert map.key_pairs[0].value.value_len == 2;
     }
 
     void psbtFillTest() throws Exception {
@@ -66,7 +71,8 @@ public class MyTests {
     }
 
     void sendDataTest(byte[] data) throws Exception {
-        MyUpload mu = new MyUpload();
-        mu.sendData(data, (byte) AppletInstructions.CLASS_PSBT_UPLOAD);
+        Upload mu = new Upload();
+        byte[] res = mu.sendData(data, (byte) AppletInstructions.CLASS_PSBT_UPLOAD);
+
     }
 }

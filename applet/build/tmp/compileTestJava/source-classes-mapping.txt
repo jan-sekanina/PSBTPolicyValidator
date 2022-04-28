@@ -1,10 +1,12 @@
-tests/MyUpload.java
- tests.MyUpload
-tests/TransactionsImported.java
- tests.TransactionsImported
-tests/AppletTest.java
- tests.AppletTest
+tests/Upload.java
+ tests.Upload
 tests/MyTests.java
  tests.MyTests
 tests/BaseTest.java
  tests.BaseTest
+tests/TransactionsImported.java
+ tests.TransactionsImported
+tests/AppletTest.java
+ tests.AppletTest
+tests/ImpTrxUnitTests.java
+ tests.ImpTrxUnitTests

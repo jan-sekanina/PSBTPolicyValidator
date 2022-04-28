@@ -4,20 +4,20 @@ import static applet.MainApplet.PSBTdata;
 
 public class PSBT {
     public static final short MAX_OF_IO_MAPS = 8;
-    public GlobalMap globalMap = new GlobalMap();
-    public GeneralMap[] inputMaps = new GeneralMap[MAX_OF_IO_MAPS];
-    public GeneralMap[] outputMaps = new GeneralMap[MAX_OF_IO_MAPS];
+    public GlobalMap global_map = new GlobalMap();
+    public GeneralMap[] input_maps = new GeneralMap[MAX_OF_IO_MAPS];
+    public GeneralMap[] output_maps = new GeneralMap[MAX_OF_IO_MAPS];
 
 
-    public short currentInputMap = 0; // how many input maps are filled
-    public short currentOutputMap = 0; // above for output
+    public short current_input_map = 0; // how many input maps are filled
+    public short current_output_map = 0; // above for output
 
     short byteSize = 0;
 
     public PSBT() {
         for (short i = 0; i < MAX_OF_IO_MAPS; i++){
-            inputMaps[i] = new GeneralMap();
-            outputMaps[i] = new GeneralMap();
+            input_maps[i] = new GeneralMap();
+            output_maps[i] = new GeneralMap();
         }
     }
 
@@ -42,9 +42,9 @@ public class PSBT {
         System.out.print("magic is ok" + System.lineSeparator());
         byteSize += 5;
 
-        globalMap.fillUp((short) 5);
+        global_map.fillUp((short) 5);
 
-        byteSize += globalMap.mapSize;
+        byteSize += global_map.map_size;
 
         assert PSBTdata[byteSize] == 0x00;
         byteSize++;
@@ -53,22 +53,22 @@ public class PSBT {
 
         //TODO: check that current IOMap != numOfIOMaps
 
-        while (globalMap.numOfInputMaps != null && currentInputMap < globalMap.numOfInputMaps) {
-            inputMaps[currentInputMap].fillUp(byteSize);
-            byteSize += inputMaps[currentInputMap].mapSize;
+        while (global_map.input_maps_total != null && current_input_map < global_map.input_maps_total) {
+            input_maps[current_input_map].fillUp(byteSize);
+            byteSize += input_maps[current_input_map].map_size;
             assert PSBTdata[byteSize] == 0x00;
-            System.out.print("input map with index " + currentInputMap + "successfully filled" + System.lineSeparator());
+            System.out.print("input map with index " + current_input_map + "successfully filled" + System.lineSeparator());
             byteSize++;
-            currentInputMap++;
+            current_input_map++;
         }
 
-        while (globalMap.numOfOutputMaps != null && currentOutputMap < globalMap.numOfOutputMaps) {
-            outputMaps[currentOutputMap].fillUp(byteSize);
-            byteSize += outputMaps[currentOutputMap].mapSize;
+        while (global_map.output_maps_total != null && current_output_map < global_map.output_maps_total) {
+            output_maps[current_output_map].fillUp(byteSize);
+            byteSize += output_maps[current_output_map].map_size;
             assert PSBTdata[byteSize] == 0x00;
-            System.out.print("output map with index " + currentOutputMap + "successfully filled" + System.lineSeparator());
+            System.out.print("output map with index " + current_output_map + "successfully filled" + System.lineSeparator());
             byteSize++;
-            currentOutputMap++;
+            current_output_map++;
         }
 
     }

@@ -8,23 +8,27 @@ applet/GeneralMap.java
  applet.GeneralMap
 applet/AppletInstructions.java
  applet.AppletInstructions
-applet/SekripkInstructions.java
- applet.SekripkInstructions
 applet/KeyPair.java
  applet.KeyPair
-applet/SecretAndTimeStorage.java
- applet.SecretAndTimeStorage
-applet/GlobalUnsignedTX.java
- applet.GlobalUnsignedTX
-applet/GlobalUnsignedTXOutput.java
- applet.GlobalUnsignedTXOutput
-applet/GlobalUnsignedTXInput.java
- applet.GlobalUnsignedTXInput
-applet/Policy.java
- applet.Policy
 applet/GlobalMap.java
  applet.GlobalMap
+applet/GlobalUnsignedTX.java
+ applet.GlobalUnsignedTX
 applet/PSBT.java
  applet.PSBT
+applet/GlobalUnsignedTXInput.java
+ applet.GlobalUnsignedTXInput
+applet/SekriptInstructions.java
+ applet.SekriptInstructions
+applet/Policy.java
+ applet.Policy
+applet/Stack.java
+ applet.Stack
+applet/SecretAndTimeStorage.java
+ applet.SecretAndTimeStorage
+applet/FromApplet.java
+ applet.FromApplet
+applet/GlobalUnsignedTXOutput.java
+ applet.GlobalUnsignedTXOutput
 applet/MainApplet.java
  applet.MainApplet

@@ -4,31 +4,31 @@ import static applet.MainApplet.PSBTdata;
 
 public class Key {
     public Short start = null;
-    public Short keyLen = null;
-    public short keyLenBytes = 1;
-    public Short keyType = null;
+    public Short key_len = null;
+    public short key_len_bytes = 1;
+    public Short key_type = null;
 
     public void fill(short arrayIndex) {
         start = arrayIndex;
-        keyLen = Tools.compactWeirdoInt(start);
-        if (keyLen >= 0xfd) {
-            keyLenBytes = 3;
+        key_len = Tools.compactWeirdoInt(start);
+        if (key_len >= 0xfd) {
+            key_len_bytes = 3;
         }
-        keyType = Tools.compactWeirdoInt((short) (start + keyLenBytes));
+        key_type = Tools.compactWeirdoInt((short) (start + key_len_bytes));
     }
 
     public short getSize() {
-        assert keyLen != null;
-        return (short) (keyLenBytes + keyLen);
+        assert key_len != null;
+        return (short) (key_len_bytes + key_len);
     }
 
     public byte getByte(short index) {
-        assert index <= keyLen;
-        return PSBTdata[start + keyLenBytes + index];
+        assert index <= key_len;
+        return PSBTdata[start + key_len_bytes + index];
     }
 
     public void setByte(short index, byte newByte) {
-        assert index <= keyLen;
-        PSBTdata[start + keyLenBytes + index] = newByte;
+        assert index <= key_len;
+        PSBTdata[start + key_len_bytes + index] = newByte;
     }
 }

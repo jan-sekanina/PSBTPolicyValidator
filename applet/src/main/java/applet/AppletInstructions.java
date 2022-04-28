@@ -10,14 +10,14 @@ package applet;
  * <p>
  * Still very useful for testing and overseeing I hope.
  * <p>
- * I might consider transforming it to hashtable or more sophisticated data structure later on
+ * I might consider transforming it to hashtable or more sophisticated data structure later on // this one aged well
  */
 
 public class AppletInstructions {
     public AppletInstructions() {
     }
 
-    public final short PACKET_BUFFER_SIZE = 250; // amount of data received in one packet
+    public static final short PACKET_BUFFER_SIZE = 250; // amount of data received in one packet
 
 
     /**
@@ -26,14 +26,26 @@ public class AppletInstructions {
      * applet initialization
      */
 
+    public static final short INSTRUCTION_VERSION = 1;
+
 
     public static final short CLASS_PSBT_UPLOAD = 0;
+    // one array of size of AppletInstruction.APDU_PACKET_SIZE is sent back as control data
+
     public static final short CLASS_POLICY_UPLOAD = 1;
     public static final short CLASS_SECRETandTIME_UPLOAD = 2; // p1 will determine reference, where to store it
 
-    public final short INS_REQUEST = 0;
-    public final short INS_UPLOAD = 1;
-    public final short INS_FINISH = 2;
+    public static final short HAND_SHAKE = 3;
+    // simple scenario where applet returns "HAND SHAKE" in bytes
+
+
+    public static final short CLASS_PSBT_UPLOAD_AND_BACK = 4;
+    // scenario where applet parses the PSBT and then sends it back
+    // to implement this one will take greater changes in how upload works. Different upload might need to be implemented
+
+    public static final short INS_REQUEST = 0;
+    public static final short INS_UPLOAD = 1;
+    public static final short INS_FINISH = 2;
 
     //global keytype bytes below
     public static final byte PSBT_GLOBAL_UNSIGNED_TX = 0x00;

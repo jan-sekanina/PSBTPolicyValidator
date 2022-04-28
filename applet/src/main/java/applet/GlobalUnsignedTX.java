@@ -1,6 +1,7 @@
 package applet;
 
 import static applet.MainApplet.PSBTdata;
+import static applet.MainApplet.controlArray;
 import static applet.Tools.byteSizeOfCWI;
 import static applet.Tools.compactWeirdoInt;
 
@@ -15,10 +16,10 @@ public class GlobalUnsignedTX {
     Short version = null;
     short size = 0;
 
-    Short inputCount = null;
+    Short input_count = null;
     GlobalUnsignedTXInput[] inputs = new GlobalUnsignedTXInput[MAX_COUNT_OF_IO];
 
-    Short outputCount = null;
+    Short output_count = null;
     GlobalUnsignedTXOutput[] outputs = new GlobalUnsignedTXOutput[MAX_COUNT_OF_IO];
 
     Short lockTimeStart = null;
@@ -34,21 +35,23 @@ public class GlobalUnsignedTX {
         start = arrayIndex;
         version = (short) PSBTdata[start];
         size += 4;
-        inputCount = getCount();
-        size += byteSizeOfCWI(inputCount);
+        input_count = getCount();
+        controlArray[0] = (byte) getCount();
+        size += byteSizeOfCWI(input_count);
 
-        assert (inputCount) <= MAX_COUNT_OF_IO;
+        assert (input_count) <= MAX_COUNT_OF_IO;
 
-        for (short i = 0; i < inputCount; i++) {
+        for (short i = 0; i < input_count; i++) {
             inputs[i].fill((short) (start + size));
             size += inputs[i].size;
         }
 
-        outputCount = getCount();
-        assert outputCount <= MAX_COUNT_OF_IO;
-        size += byteSizeOfCWI(outputCount);
+        output_count = getCount();
+        controlArray[1] = (byte) getCount();
+        assert output_count <= MAX_COUNT_OF_IO;
+        size += byteSizeOfCWI(output_count);
 
-        for (short i = 0; i < outputCount; i++) {
+        for (short i = 0; i < output_count; i++) {
             outputs[i].fill((short)(start + size));
             size += outputs[i].size;
         }
@@ -65,8 +68,8 @@ public class GlobalUnsignedTX {
         System.out.print("starts at: " + start + System.lineSeparator());
         System.out.print("version: " + version + System.lineSeparator());
         System.out.print("size: " + size + System.lineSeparator());
-        System.out.print("input count: " + inputCount + System.lineSeparator());
-        System.out.print("output count: " + outputCount + System.lineSeparator());
+        System.out.print("input count: " + input_count + System.lineSeparator());
+        System.out.print("output count: " + output_count + System.lineSeparator());
         System.out.print("lockTimeStart: " + lockTimeStart + System.lineSeparator());
     }
 
