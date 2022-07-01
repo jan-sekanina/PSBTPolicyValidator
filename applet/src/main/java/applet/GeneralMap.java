@@ -3,6 +3,8 @@ package applet;
 import static applet.MainApplet.PSBTdata;
 
 public class GeneralMap {
+
+    public short map_start = -1;
     public short NUM_OF_KEYPAIR = 8;
     public short current_key_pair = -1;
     public KeyPair[] key_pairs = new KeyPair[NUM_OF_KEYPAIR];
@@ -16,7 +18,8 @@ public class GeneralMap {
         }
     }
 
-    public void fillUp(short arrayIndex) {
+    public void fill(short arrayIndex) {
+        map_start = (short) (arrayIndex + 1);
         while ((PSBTdata[arrayIndex + map_size] & 0xff) != 0x00 && current_key_pair < NUM_OF_KEYPAIR - 1) {
             current_key_pair++;
             //System.out.print("mapsize = " + mapSize + System.lineSeparator());

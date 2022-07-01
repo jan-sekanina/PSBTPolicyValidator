@@ -1,11 +1,6 @@
 package tests;
 
 import applet.*;
-import cz.muni.fi.crocs.rcard.client.CardManager;
-import applet.AppletInstructions.*;
-
-import javax.smartcardio.CommandAPDU;
-import javax.smartcardio.ResponseAPDU;
 
 public class MyTests {
 
@@ -51,7 +46,7 @@ public class MyTests {
         byte[] data = fromHex("05" + "0a" + "11111111" + "02" + "0000"+ "00" +
                 "05" + "0a" + "11111111" + "02" + "0000"+ "00");
         GeneralMap map = new GeneralMap();
-        map.fillUp((short) 0);
+        map.fill((short) 0);
         assert map.key_pairs[0].key.key_len == 5;
         assert map.key_pairs[0].key.key_type == 10;
         assert map.key_pairs[0].value.value_len == 2;

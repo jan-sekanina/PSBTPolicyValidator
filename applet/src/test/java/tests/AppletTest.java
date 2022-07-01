@@ -66,6 +66,8 @@ public class AppletTest extends BaseTest {
         //MyTests myTest = new MyTests();
         //Upload mu = new Upload();
         ImpTrxUnitTests IT = new ImpTrxUnitTests();
-        IT.runAllTests();
+        AppletControl AC = new AppletControl();
+        //IT.runAllTests();
+        AC.DownloadTest();
     }
 }

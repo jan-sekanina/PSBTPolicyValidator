@@ -29,6 +29,14 @@ public class MainApplet extends Applet implements MultiSelectable {
         psbt = new PSBT();
         PSBTdata = new byte[MAX_SIZE_OF_PSBT];  // to change PSBT max size change this constant
         controlArray = new byte[AppletInstructions.PACKET_BUFFER_SIZE]; // array that is sent back to computer as confirmation
+        controlArray[0] = 0;
+        controlArray[1] = 1;
+        controlArray[2] = 2;
+        controlArray[3] = 3;
+        controlArray[4] = 4;
+        controlArray[5] = 5;
+        controlArray[6] = 6;
+        controlArray[7] = 7;
         this.offset = 0;
 
         random = RandomData.getInstance(RandomData.ALG_SECURE_RANDOM);
@@ -50,15 +58,16 @@ public class MainApplet extends Applet implements MultiSelectable {
          */
         if (cla == AppletInstructions.CLASS_PSBT_UPLOAD) {
             if (ins == AppletInstructions.INS_REQUEST) {
-                //good
+                // TODO: return array size
             }
-            if (ins == AppletInstructions.INS_UPLOAD){
+            if (ins == AppletInstructions.INS_UPLOAD) {
 
-                Util.arrayCopyNonAtomic(apduBuffer, (short) 5, PSBTdata, offset, (short) (lc & 0xff));
+                Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, PSBTdata, offset, (short) (lc & 0xff));
                 System.out.print(Arrays.toString(PSBTdata) + System.lineSeparator());
                 offset += (short) (lc & 0xff);
             }
-            if (ins == AppletInstructions.INS_FINISH){
+
+            if (ins == AppletInstructions.INS_FINISH) {
 
                 System.out.print(Arrays.toString(PSBTdata));
                 try {
@@ -66,14 +75,6 @@ public class MainApplet extends Applet implements MultiSelectable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                //controlArray[0] = (byte) 42;
-                //controlArray[1] = (byte) 69;
-                controlArray[2] = (byte) 42;
-                controlArray[3] = (byte) 69;
-
-                FromApplet.send_data(apdu, controlArray);
-                // sends control array back to computer
             }
         }
         //ISOException.throwIt((short) 0x9000); how it looks
@@ -82,13 +83,13 @@ public class MainApplet extends Applet implements MultiSelectable {
          * this uploads Policy represented as array of bytes
          */
         if (cla == AppletInstructions.CLASS_POLICY_UPLOAD) {
-            if (ins == AppletInstructions.INS_REQUEST){
+            if (ins == AppletInstructions.INS_REQUEST) {
                 //do smth here
             }
-            if (ins == AppletInstructions.INS_UPLOAD){
+            if (ins == AppletInstructions.INS_UPLOAD) {
                 //do smth here
             }
-            if (ins == AppletInstructions.INS_FINISH){
+            if (ins == AppletInstructions.INS_FINISH) {
                 //do smth here
             }
         }
@@ -96,22 +97,58 @@ public class MainApplet extends Applet implements MultiSelectable {
          * this uploads data(secrets and time signed by authority) for Policy
          */
         if (cla == AppletInstructions.CLASS_SECRETandTIME_UPLOAD) {
-            if (ins == AppletInstructions.INS_REQUEST){
+            if (ins == AppletInstructions.INS_REQUEST) {
                 //do smth here
             }
-            if (ins == AppletInstructions.INS_UPLOAD){
+            if (ins == AppletInstructions.INS_UPLOAD) {
                 //do smth here
             }
-            if (ins == AppletInstructions.INS_FINISH){
+            if (ins == AppletInstructions.INS_FINISH) {
                 //do smth here
             }
+        }
+
+        if (cla == AppletInstructions.CLASS_DEBUG_DOWNLOAD && ins == AppletInstructions.INS_DOWNLOAD_ARRAY) {
+            short from = Tools.toShort(apduBuffer[ISO7816.OFFSET_CDATA], apduBuffer[ISO7816.OFFSET_CDATA+ 1]);
+            short to = Tools.toShort(apduBuffer[ISO7816.OFFSET_CDATA + 2], apduBuffer[ISO7816.OFFSET_CDATA + 3]);
+            System.out.print("from: " + from + System.lineSeparator());
+            System.out.print("to: " + to + System.lineSeparator());
+            if (from < 0 || to > PSBTdata.length) {
+                try {
+                    throw new Exception("Can't download data outside of array!");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if (to - from < 0) {
+                try {
+                    throw new Exception("Negate amount of bytes can't be transferred!");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            FromApplet.send_data(apdu, PSBTdata, from, to);
+        }
+
+        if (cla == AppletInstructions.CLASSS_DOWNLOAD_GLOBAL_ALL) {
+            FromApplet.send_data(apdu, psbt.global_map);
+        }
+
+        if (cla == AppletInstructions.CLASSS_DOWNLOAD_INPUT_ALL) { // TODO: change asserts to exception warning
+            assert p1 >= 0;
+            assert p1 <= psbt.current_input_map;
+            FromApplet.send_data(apdu, psbt.input_maps[p1]);
+        }
+
+        if (cla == AppletInstructions.CLASSS_DOWNLOAD_OUTPUT_ALL) { // TODO: same
+            assert p1 >= 0;
+            assert p1 <= psbt.current_output_map;
+            FromApplet.send_data(apdu, psbt.output_maps[p1]);
         }
 
         if (cla == AppletInstructions.HAND_SHAKE) {
             byte[] HAND_SHAKE = {'H', 'A', 'N', 'D', ' ', 'S', 'H', 'A', 'K', 'E'};
             Util.arrayCopyNonAtomic(HAND_SHAKE, (short) 0, apduBuffer, (short) 0, (short) HAND_SHAKE.length);
             apdu.setOutgoingAndSend((short) 0, (short) HAND_SHAKE.length);
-            return;
         }
     }
 

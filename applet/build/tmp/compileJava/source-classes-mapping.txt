@@ -10,12 +10,12 @@ applet/AppletInstructions.java
  applet.AppletInstructions
 applet/KeyPair.java
  applet.KeyPair
-applet/GlobalMap.java
- applet.GlobalMap
+applet/GlobalUnsignedTXOutput.java
+ applet.GlobalUnsignedTXOutput
 applet/GlobalUnsignedTX.java
  applet.GlobalUnsignedTX
-applet/PSBT.java
- applet.PSBT
+applet/FromApplet.java
+ applet.FromApplet
 applet/GlobalUnsignedTXInput.java
  applet.GlobalUnsignedTXInput
 applet/SekriptInstructions.java
@@ -26,9 +26,9 @@ applet/Stack.java
  applet.Stack
 applet/SecretAndTimeStorage.java
  applet.SecretAndTimeStorage
-applet/FromApplet.java
- applet.FromApplet
-applet/GlobalUnsignedTXOutput.java
- applet.GlobalUnsignedTXOutput
+applet/GlobalMap.java
+ applet.GlobalMap
+applet/PSBT.java
+ applet.PSBT
 applet/MainApplet.java
  applet.MainApplet

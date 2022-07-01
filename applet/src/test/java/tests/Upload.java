@@ -3,9 +3,12 @@ import applet.*;
 import cz.muni.fi.crocs.rcard.client.CardManager;
 import javacard.framework.Util;
 
+import javax.smartcardio.Card;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
 import java.nio.charset.StandardCharsets;
+
+import static tests.AppletComunicationTools.getPacketBufferSize;
 
 /**
  * class of my tests
@@ -36,10 +39,7 @@ public class Upload extends BaseTest {
      *
      * @return amount of data that can be sent in one transaction
      */
-    public short getPacketBufferSize(){
-        //todo make this to communicate with applet itself
-        return AppletInstructions.PACKET_BUFFER_SIZE;
-    }
+
 
     /**
      *
@@ -77,6 +77,38 @@ public class Upload extends BaseTest {
 
         manager.disconnect(true);
 
+//      cmd = new CommandAPDU(1, 1, 1, 1, 1, 1, 1, 1);
+
+        return rsp.getBytes();
+    }
+
+    public byte[] sendData(byte[] data, byte uploadClass, CardManager manager) throws Exception {
+        CommandAPDU cmd;
+        ResponseAPDU rsp;
+        short packetSize = getPacketBufferSize();
+        cmd = new CommandAPDU(uploadClass, AppletInstructions.INS_REQUEST, 0, 0);
+        rsp = manager.transmit(cmd);
+        assert rsp.getSW() == 0x9000;
+
+        int offset = 0;
+
+        while (offset + packetSize < data.length) {
+            cmd = new CommandAPDU(uploadClass, AppletInstructions.INS_UPLOAD, 0, 0, data, offset, packetSize, 0);
+            rsp = manager.transmit(cmd);
+            assert rsp.getSW() == 0x9000;
+            offset += packetSize;
+        }
+
+        cmd = new CommandAPDU(uploadClass, AppletInstructions.INS_UPLOAD, 0, 0, data, offset, data.length - offset);
+        rsp = manager.transmit(cmd);
+        assert rsp.getSW() == 0x9000;
+
+        cmd = new CommandAPDU(uploadClass, AppletInstructions.INS_FINISH, 0, 0);
+        rsp = manager.transmit(cmd);
+        System.out.print(rsp.getSW() + System.lineSeparator());
+        System.out.print(rsp.getSW1() + System.lineSeparator());
+        System.out.print(rsp.getSW2() + System.lineSeparator());
+        assert rsp.getSW() == 0x9000;
 //      cmd = new CommandAPDU(1, 1, 1, 1, 1, 1, 1, 1);
 
         return rsp.getBytes();

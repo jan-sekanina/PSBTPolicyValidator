@@ -10,7 +10,8 @@ public class GlobalMap extends GeneralMap {
     //PGU_TX_keypair fancyKeyPairInfo = new PGU_TX_keypair();
     GlobalUnsignedTX globalUnsignedTX = new GlobalUnsignedTX();
 
-    public void fillUp(short arrayIndex) {
+    public void fill(short arrayIndex) {
+        map_start = (short) (arrayIndex + 1);
         while ((PSBTdata[arrayIndex + map_size] & 0xff) != 0x00 && current_key_pair < NUM_OF_KEYPAIR - 1) {
             current_key_pair++;
             key_pairs[current_key_pair].fill((short) (arrayIndex + map_size));
