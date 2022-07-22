@@ -1,0 +1,3 @@
+https://medium.datadriveninvestor.com/bitcoin-raw-transaction-breakdown-c0a5a3aa8688
+https://developer.bitcoin.org/reference/transactions.html
+https://bitcoin.org/bitcoin.pdf
