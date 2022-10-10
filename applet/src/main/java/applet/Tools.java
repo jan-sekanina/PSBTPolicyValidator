@@ -12,8 +12,6 @@ public class Tools {
      */
 
     public static short toShort(byte zero, byte first) {
-        System.out.print("toShort returns: " + (short) ((zero & 0xff) * 256 + (first & 0xff))
-                + System.lineSeparator());
         return (short) ((zero & 0xff) * 256 + (first & 0xff)); // TODO: have to check overflow
     }
 

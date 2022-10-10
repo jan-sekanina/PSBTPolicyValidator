@@ -10,7 +10,8 @@ import static applet.MainApplet.PSBTdata;
 public class FromApplet {
     /**
      * should be used for small amount of data of size of one packet max
-     * @param apdu apdu used for communication
+     *
+     * @param apdu  apdu used for communication
      * @param array array of data to send
      */
 
@@ -27,8 +28,24 @@ public class FromApplet {
         apdu.setOutgoingAndSend((short) 0, (short) 4);
     }
 
+    static void send_data(APDU apdu, KeyPair keyPair) {
+        apdu.getBuffer()[0] = (byte) (keyPair.key.start << 8);
+        apdu.getBuffer()[1] = (byte) (keyPair.key.start);
+        apdu.getBuffer()[2] = (byte) (keyPair.getSize() << 8);
+        apdu.getBuffer()[3] = (byte) (keyPair.getSize());
+        apdu.setOutgoingAndSend((short) 0, (short) 4);
+    }
+
+    static void send_data(APDU apdu, short data) {
+        apdu.getBuffer()[0] = (byte) (data << 8);
+        apdu.getBuffer()[1] = (byte) (data);
+        apdu.setOutgoingAndSend((short) 0, (short) 4);
+    }
+}
+
+        /**
     static void send_data(APDU apdu, KeyPair key_pair) {
         //TODO rewrite this to take a byte of KeyPair type instead of itself
         send_data(apdu, PSBTdata, key_pair.start, key_pair.getSize());
     }
-}
+         **/

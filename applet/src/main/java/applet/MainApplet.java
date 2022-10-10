@@ -109,8 +109,8 @@ public class MainApplet extends Applet implements MultiSelectable {
         }
 
         if (cla == AppletInstructions.CLASS_DEBUG_DOWNLOAD && ins == AppletInstructions.INS_DOWNLOAD_ARRAY) {
-            short from = Tools.toShort(apduBuffer[ISO7816.OFFSET_CDATA], apduBuffer[ISO7816.OFFSET_CDATA+ 1]);
-            short to = Tools.toShort(apduBuffer[ISO7816.OFFSET_CDATA + 2], apduBuffer[ISO7816.OFFSET_CDATA + 3]);
+            short from = (short) (apduBuffer[ISO7816.OFFSET_CDATA] << 8 | apduBuffer[ISO7816.OFFSET_CDATA + 1]);
+            short to = (short) (apduBuffer[ISO7816.OFFSET_CDATA + 2] << 8 | apduBuffer[ISO7816.OFFSET_CDATA + 3]);
             System.out.print("from: " + from + System.lineSeparator());
             System.out.print("to: " + to + System.lineSeparator());
             if (from < 0 || to > PSBTdata.length) {
@@ -129,23 +129,60 @@ public class MainApplet extends Applet implements MultiSelectable {
             FromApplet.send_data(apdu, PSBTdata, from, to);
         }
 
-        if (cla == AppletInstructions.CLASSS_DOWNLOAD_GLOBAL_ALL) {
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_VERSION){
+            if (psbt.global_map.PSBTversion != null) {
+                FromApplet.send_data(apdu, psbt.global_map.PSBTversion);
+            }
+            else {
+                FromApplet.send_data(apdu, (short) (-1));
+            }
+        }
+
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_SIZE){
+            FromApplet.send_data(apdu, offset);
+        }
+
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_INPUT){
+            if (psbt.global_map.input_maps_total != null) {
+                FromApplet.send_data(apdu, psbt.global_map.input_maps_total);
+            }
+            if (psbt.global_map.globalUnsignedTX.input_count != null) {
+                FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.input_count);
+            }
+        }
+
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_OUTPUT){
+            if (psbt.global_map.input_maps_total != null) {
+                FromApplet.send_data(apdu, psbt.global_map.output_maps_total);
+            }
+            if (psbt.global_map.globalUnsignedTX.output_count != null) {
+                FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.output_count);
+            }
+        }
+
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_ALL) {
             FromApplet.send_data(apdu, psbt.global_map);
         }
 
-        if (cla == AppletInstructions.CLASSS_DOWNLOAD_INPUT_ALL) { // TODO: change asserts to exception warning
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_INPUT_ALL) { // TODO: change asserts to exception warning
             assert p1 >= 0;
             assert p1 <= psbt.current_input_map;
             FromApplet.send_data(apdu, psbt.input_maps[p1]);
         }
 
-        if (cla == AppletInstructions.CLASSS_DOWNLOAD_OUTPUT_ALL) { // TODO: same
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_OUTPUT_ALL) { // TODO: same
             assert p1 >= 0;
             assert p1 <= psbt.current_output_map;
             FromApplet.send_data(apdu, psbt.output_maps[p1]);
         }
 
-        if (cla == AppletInstructions.HAND_SHAKE) {
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP_KEYPAIR) { // TODO: same
+            assert p1 >= 0;
+            assert p1 <= psbt.global_map.current_key_pair;
+            FromApplet.send_data(apdu, psbt.global_map.key_pairs[p1]);
+        }
+
+        if (cla == AppletInstructions.CLASS_HAND_SHAKE) {
             byte[] HAND_SHAKE = {'H', 'A', 'N', 'D', ' ', 'S', 'H', 'A', 'K', 'E'};
             Util.arrayCopyNonAtomic(HAND_SHAKE, (short) 0, apduBuffer, (short) 0, (short) HAND_SHAKE.length);
             apdu.setOutgoingAndSend((short) 0, (short) HAND_SHAKE.length);

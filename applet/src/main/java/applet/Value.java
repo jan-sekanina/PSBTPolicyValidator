@@ -3,7 +3,7 @@ package applet;
 import static applet.MainApplet.PSBTdata;
 
 public class Value {
-    public Short start = null;
+    public short start = -1;
     public Short value_len = null;
     public short value_len_bytes = 1;
 

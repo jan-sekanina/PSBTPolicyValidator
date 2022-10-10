@@ -1,7 +1,5 @@
 package applet;
 
-import org.graalvm.compiler.graph.Node;
-
 /**
  * Class of applet instructions to make testing and changing instructions easier
  * both MainApplet and MyTests are getting instructions from this class
@@ -36,7 +34,7 @@ public class AppletInstructions {
 
     public static final short CLASS_POLICY_UPLOAD = 1;
     // simple scenario where applet returns "HAND SHAKE" in bytes
-    public static final short HAND_SHAKE = 3;
+    public static final short CLASS_HAND_SHAKE = 3;
     public static final short CLASS_SECRETandTIME_UPLOAD = 2; // p1 will determine reference, where to store it
     public static final short CLASS_DEBUG_DOWNLOAD = 4;
 
@@ -44,13 +42,17 @@ public class AppletInstructions {
      * Below are debug classes
      */
     public static final short CLASS_DOWNLOAD_GLOBAL_MAP = 5; // p1 which global map, here always 0
+    public static final short INS_DOWNLOAD_NUM_OUTPUT = 4;
+    public static final short INS_DOWNLOAD_NUM_INPUT = 5;
+    public static final short INS_DOWNLOAD_VERSION = 6;
+    public static final short INS_DOWNLOAD_SIZE = 7;
     public static final short CLASS_DOWNLOAD_INPUT_MAP = 6; // p1 is position of map, map must be present, first is 0
     public static final short CLASS_DOWNLOAD_OUTPUT_MAP = 7; // --above--
 
-    public static final short CLASSS_DOWNLOAD_GLOBAL_ALL = 8;
-    public static final short CLASSS_DOWNLOAD_INPUT_ALL = 9;
-    public static final short CLASSS_DOWNLOAD_OUTPUT_ALL = 10;
-
+    public static final short CLASS_DOWNLOAD_GLOBAL_ALL = 8;
+    public static final short CLASS_DOWNLOAD_INPUT_ALL = 9;
+    public static final short CLASS_DOWNLOAD_OUTPUT_ALL = 10;
+    public static final short CLASS_DOWNLOAD_GLOBAL_MAP_KEYPAIR = 11;
 
 
     public static final short CLASS_PSBT_UPLOAD_AND_BACK = 4;

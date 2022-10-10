@@ -3,14 +3,45 @@ package tests;
 import applet.AppletInstructions;
 import cz.muni.fi.crocs.rcard.client.CardManager;
 
-import javax.smartcardio.Card;
 import javax.smartcardio.CardException;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
-import java.util.Arrays;
 
 public class Download {
+    public short downloadVersion(CardManager manager) throws CardException {
+        CommandAPDU cmd;
+        ResponseAPDU rsp;
+        cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP, AppletInstructions.INS_DOWNLOAD_VERSION, 0, 0);
+        rsp = manager.transmit(cmd);
+        byte[] ar = rsp.getData();
+        return (short) (ar[0] << 8 | ar[1]);
+    }
 
+    public short downloadSize(CardManager manager) throws CardException {
+        CommandAPDU cmd;
+        ResponseAPDU rsp;
+        cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP, AppletInstructions.INS_DOWNLOAD_SIZE, 0, 0);
+        rsp = manager.transmit(cmd);
+        byte[] ar = rsp.getData();
+        return (short) (ar[0] << 8 | ar[1]);
+    }
+    public short downloadNumOfInp(CardManager manager) throws CardException {
+        CommandAPDU cmd;
+        ResponseAPDU rsp;
+        cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP, AppletInstructions.INS_DOWNLOAD_NUM_INPUT, 0, 0);
+        rsp = manager.transmit(cmd);
+        byte[] ar = rsp.getData();
+        return (short) (ar[0] << 8 | ar[1]);
+    }
+
+    public short downloadNumOfOut(CardManager manager) throws CardException {
+        CommandAPDU cmd;
+        ResponseAPDU rsp;
+        cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP, AppletInstructions.INS_DOWNLOAD_NUM_OUTPUT, 0, 0);
+        rsp = manager.transmit(cmd);
+        byte[] ar = rsp.getData();
+        return (short) (ar[0] << 8 | ar[1]);
+    }
 
     public byte[] downloadMap(CardManager manager, short map, byte position) throws CardException {
         CommandAPDU cmd;
@@ -19,7 +50,6 @@ public class Download {
         rsp = manager.transmit(cmd);
         byte[] ar = rsp.getData();
         return downloadDebugArray(manager,(short) (ar[0] << 8 | ar[1]), (short) (ar[2] << 8 | ar[3]));
-
     }
 
     public byte[] downloadDebugArray(CardManager manager, short from, short to) throws CardException {
@@ -55,5 +85,14 @@ public class Download {
             System.arraycopy(rsp.getData(), (short) 0, res,  offset, to - (offset + from));
         }
         return res;
+    }
+
+    public byte[] downloadGlobalKeypair(CardManager manager, int position) throws CardException {
+        CommandAPDU cmd;
+        ResponseAPDU rsp;
+        cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP_KEYPAIR,  0,position, 0, null, 0, 0, 4);
+        rsp = manager.transmit(cmd);
+        byte[] ar = rsp.getData();
+        return downloadDebugArray(manager,(short) (ar[0] << 8 | ar[1]), (short) (ar[2] << 8 | ar[3]));
     }
 }

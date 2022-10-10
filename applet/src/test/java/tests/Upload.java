@@ -1,9 +1,7 @@
 package tests;
 import applet.*;
 import cz.muni.fi.crocs.rcard.client.CardManager;
-import javacard.framework.Util;
 
-import javax.smartcardio.Card;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +24,7 @@ public class Upload extends BaseTest {
     public void handshake() throws Exception{
         CommandAPDU cmd;
         ResponseAPDU rsp;
-        cmd = new CommandAPDU(AppletInstructions.HAND_SHAKE, AppletInstructions.INS_REQUEST, 0, 0);
+        cmd = new CommandAPDU(AppletInstructions.CLASS_HAND_SHAKE, AppletInstructions.INS_REQUEST, 0, 0);
 
         CardManager manager = connect();
         rsp = manager.transmit(cmd);

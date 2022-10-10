@@ -7,6 +7,7 @@ import org.junit.jupiter.api.*;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 /**
  * Example test class for the applet
@@ -41,9 +42,9 @@ public class AppletTest extends BaseTest {
     public void hello() throws Exception {
         final CommandAPDU cmd = new CommandAPDU(0x00, 0x90, 0, 0);
         final ResponseAPDU responseAPDU = connect().transmit(cmd);
-        Assert.assertNotNull(responseAPDU);
-        Assert.assertEquals(0x9000, responseAPDU.getSW());
-        Assert.assertNotNull(responseAPDU.getBytes());
+        Assertions.assertNotNull(responseAPDU);
+        Assertions.assertEquals(0x9000, responseAPDU.getSW());
+        Assertions.assertNotNull(responseAPDU.getBytes());
         System.out.print("Test hello: passed" + System.lineSeparator());
     }
 
@@ -54,10 +55,10 @@ public class AppletTest extends BaseTest {
         final CommandAPDU cmd = new CommandAPDU(0x00, 0x80, 0, 0, welcomeB, 0, welcomeB.length, 32);
         final ResponseAPDU responseAPDU = connect().transmit(cmd);
 
-        Assert.assertNotNull(responseAPDU);
-        Assert.assertEquals(0x9000, responseAPDU.getSW());
-        Assert.assertNotNull(responseAPDU.getBytes());
-        System.out.print(responseAPDU.getBytes() + System.lineSeparator());
+        Assertions.assertNotNull(responseAPDU);
+        Assertions.assertEquals(0x9000, responseAPDU.getSW());
+        Assertions.assertNotNull(responseAPDU.getBytes());
+        System.out.print(Arrays.toString(responseAPDU.getBytes()) + System.lineSeparator());
         System.out.print("Test hell: passed" + System.lineSeparator());
     }
 
@@ -68,6 +69,6 @@ public class AppletTest extends BaseTest {
         ImpTrxUnitTests IT = new ImpTrxUnitTests();
         AppletControl AC = new AppletControl();
         //IT.runAllTests();
-        AC.DownloadTest();
+        AC.AppletDebug();
     }
 }

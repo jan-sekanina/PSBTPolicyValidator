@@ -3,7 +3,7 @@ package applet;
 import static applet.MainApplet.PSBTdata;
 
 public class Key {
-    public Short start = null;
+    public short start = -1;
     public Short key_len = null;
     public short key_len_bytes = 1;
     public Short key_type = null;
