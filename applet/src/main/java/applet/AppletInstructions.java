@@ -14,6 +14,8 @@ package applet;
  */
 
 public class AppletInstructions {
+
+
     public AppletInstructions() {
     }
 
@@ -42,13 +44,15 @@ public class AppletInstructions {
      * Below are debug classes
      */
     public static final short CLASS_DOWNLOAD_GLOBAL_MAP = 5; // p1 which global map, here always 0
-    public static final short INS_DOWNLOAD_NUM_OUTPUT = 4;
-    public static final short INS_DOWNLOAD_NUM_INPUT = 5;
+    public static final short INS_DOWNLOAD_NUM_INPUT_V0 = 5;
+    public static final short INS_DOWNLOAD_NUM_OUTPUT_V0 = 4;
     public static final short INS_DOWNLOAD_VERSION = 6;
     public static final short INS_DOWNLOAD_SIZE = 7;
     public static final short CLASS_DOWNLOAD_INPUT_MAP = 6; // p1 is position of map, map must be present, first is 0
     public static final short CLASS_DOWNLOAD_OUTPUT_MAP = 7; // --above--
 
+    public static final short CLASS_DOWNLOAD_INPUT_V0 = 12;
+    public static final short CLASS_DOWNLOAD_OUTPUT_V0 = 13;
     public static final short CLASS_DOWNLOAD_GLOBAL_ALL = 8;
     public static final short CLASS_DOWNLOAD_INPUT_ALL = 9;
     public static final short CLASS_DOWNLOAD_OUTPUT_ALL = 10;

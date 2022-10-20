@@ -3,7 +3,6 @@ package applet;
 import javacard.framework.*;
 import javacard.security.RandomData;
 
-import java.util.Arrays; // this import won't be needed in applet itself
 
 public class MainApplet extends Applet implements MultiSelectable {
     public static final short MAX_SIZE_OF_PSBT = 1024 * 6;
@@ -63,13 +62,11 @@ public class MainApplet extends Applet implements MultiSelectable {
             if (ins == AppletInstructions.INS_UPLOAD) {
 
                 Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, PSBTdata, offset, (short) (lc & 0xff));
-                System.out.print(Arrays.toString(PSBTdata) + System.lineSeparator());
                 offset += (short) (lc & 0xff);
             }
 
             if (ins == AppletInstructions.INS_FINISH) {
 
-                System.out.print(Arrays.toString(PSBTdata));
                 try {
                     psbt.fill();
                 } catch (Exception e) {
@@ -109,10 +106,8 @@ public class MainApplet extends Applet implements MultiSelectable {
         }
 
         if (cla == AppletInstructions.CLASS_DEBUG_DOWNLOAD && ins == AppletInstructions.INS_DOWNLOAD_ARRAY) {
-            short from = (short) (apduBuffer[ISO7816.OFFSET_CDATA] << 8 | apduBuffer[ISO7816.OFFSET_CDATA + 1]);
-            short to = (short) (apduBuffer[ISO7816.OFFSET_CDATA + 2] << 8 | apduBuffer[ISO7816.OFFSET_CDATA + 3]);
-            System.out.print("from: " + from + System.lineSeparator());
-            System.out.print("to: " + to + System.lineSeparator());
+            short from = (short) ((apduBuffer[ISO7816.OFFSET_CDATA] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 1] & 0xff));
+            short to = (short) ((apduBuffer[ISO7816.OFFSET_CDATA + 2] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 3] & 0xff));
             if (from < 0 || to > PSBTdata.length) {
                 try {
                     throw new Exception("Can't download data outside of array!");
@@ -142,22 +137,20 @@ public class MainApplet extends Applet implements MultiSelectable {
             FromApplet.send_data(apdu, offset);
         }
 
-        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_INPUT){
-            if (psbt.global_map.input_maps_total != null) {
-                FromApplet.send_data(apdu, psbt.global_map.input_maps_total);
-            }
-            if (psbt.global_map.globalUnsignedTX.input_count != null) {
-                FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.input_count);
-            }
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_INPUT_V0){
+            FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.input_count);
         }
 
-        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_OUTPUT){
-            if (psbt.global_map.input_maps_total != null) {
-                FromApplet.send_data(apdu, psbt.global_map.output_maps_total);
-            }
-            if (psbt.global_map.globalUnsignedTX.output_count != null) {
-                FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.output_count);
-            }
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_OUTPUT_V0){
+            FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.output_count);
+        }
+
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_INPUT_V0){
+            FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.inputs[p1]);
+        }
+
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_OUTPUT_V0){
+            FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.outputs[p1]);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_ALL) {
@@ -165,20 +158,14 @@ public class MainApplet extends Applet implements MultiSelectable {
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_INPUT_ALL) { // TODO: change asserts to exception warning
-            assert p1 >= 0;
-            assert p1 <= psbt.current_input_map;
             FromApplet.send_data(apdu, psbt.input_maps[p1]);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_OUTPUT_ALL) { // TODO: same
-            assert p1 >= 0;
-            assert p1 <= psbt.current_output_map;
             FromApplet.send_data(apdu, psbt.output_maps[p1]);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP_KEYPAIR) { // TODO: same
-            assert p1 >= 0;
-            assert p1 <= psbt.global_map.current_key_pair;
             FromApplet.send_data(apdu, psbt.global_map.key_pairs[p1]);
         }
 

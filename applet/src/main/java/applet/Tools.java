@@ -24,7 +24,6 @@ public class Tools {
      * @return converted short
      */
     public static short compactWeirdoInt(short int_start) {
-        assert (PSBTdata[int_start] & 0xff) <= 0xfd;
         if ((short) (PSBTdata[int_start] & 0xff) == 0xfd) {
             return (Tools.toShort(PSBTdata[int_start + 1], PSBTdata[int_start + 2]));
         }

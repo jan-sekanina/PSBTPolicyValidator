@@ -64,11 +64,32 @@ public class AppletTest extends BaseTest {
 
     @Test
     public void callMyTest() throws Exception {
-        //MyTests myTest = new MyTests();
-        //Upload mu = new Upload();
-        ImpTrxUnitTests IT = new ImpTrxUnitTests();
-        AppletControl AC = new AppletControl();
-        //IT.runAllTests();
-        AC.AppletDebug();
+        //AppletControl AC1stTransaction = new AppletControl(TransactionsImported.validTransaction1);
+        //AppletControl AC2stTransaction = new AppletControl(TransactionsImported.validTransaction2);
+        //AppletControl AC3stTransaction = new AppletControl(TransactionsImported.validTransaction3);
+        //AppletControl AC4stTransaction = new AppletControl(TransactionsImported.validTransaction4);
+        //AppletControl AC5stTransaction = new AppletControl(TransactionsImported.validTransaction5);
+        //AppletControl AC6stTransaction = new AppletControl(TransactionsImported.validTransaction6);
+        //AppletControl AC7stTransaction = new AppletControl(TransactionsImported.validTransaction7);
+        //AppletControl AC8stTransaction = new AppletControl(TransactionsImported.validTransaction8);
+        //AppletControl AC9stTransaction = new AppletControl(TransactionsImported.validTransaction9);
+        AppletControl AC10stTransaction = new AppletControl(TransactionsImported.validTransaction10);
+
+        //AC1stTransaction.AppletDebugV0();
+        //AC2stTransaction.AppletDebugV0();
+        /**
+        AC3stTransaction.AppletDebugV0();
+        AC4stTransaction.AppletDebugV0();
+        AC5stTransaction.AppletDebugV0();
+        AC6stTransaction.AppletDebugV0();
+        AC7stTransaction.AppletDebugV0();
+        AC8stTransaction.AppletDebugV0();
+         */
+        //AC9stTransaction.AppletDebugV0();
+        AC10stTransaction.AppletDebugV0();
+
+        // POZOR DĚLÁ TO BORDEL KDYŽ TO ČLOVĚK PUSTÍ VŠECHNO NAJEDNOU, Z NĚJAKÉHO DŮVODU TO BERE ŠPATNÉ HODNOTY
+        // SAMOSTATNĚ TO ALE FUNGUJE, WTF
+
     }
 }

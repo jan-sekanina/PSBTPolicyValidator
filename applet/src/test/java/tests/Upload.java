@@ -103,9 +103,6 @@ public class Upload extends BaseTest {
 
         cmd = new CommandAPDU(uploadClass, AppletInstructions.INS_FINISH, 0, 0);
         rsp = manager.transmit(cmd);
-        System.out.print(rsp.getSW() + System.lineSeparator());
-        System.out.print(rsp.getSW1() + System.lineSeparator());
-        System.out.print(rsp.getSW2() + System.lineSeparator());
         assert rsp.getSW() == 0x9000;
 //      cmd = new CommandAPDU(1, 1, 1, 1, 1, 1, 1, 1);
 

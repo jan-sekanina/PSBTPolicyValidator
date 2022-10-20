@@ -16,17 +16,14 @@ public class Value {
     }
 
     public short getSize() {
-        assert value_len != null;
         return (short) (value_len_bytes + value_len);
     }
 
     public byte getByte(short index) {
-        assert index <= value_len;
         return PSBTdata[start + value_len_bytes + index];
     }
 
     public void setByte(short index, byte newByte) {
-        assert index <= value_len;
         PSBTdata[start + value_len_bytes + index] = newByte;
     }
 }

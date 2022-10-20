@@ -39,7 +39,6 @@ public class GlobalUnsignedTX {
         controlArray[0] = (byte) getCount();
         size += byteSizeOfCWI(input_count);
 
-        assert (input_count) <= MAX_COUNT_OF_IO;
 
         for (short i = 0; i < input_count; i++) {
             inputs[i].fill((short) (start + size));
@@ -48,7 +47,6 @@ public class GlobalUnsignedTX {
 
         output_count = getCount();
         controlArray[1] = (byte) getCount();
-        assert output_count <= MAX_COUNT_OF_IO;
         size += byteSizeOfCWI(output_count);
 
         for (short i = 0; i < output_count; i++) {
@@ -57,25 +55,13 @@ public class GlobalUnsignedTX {
         }
         lockTimeStart = size;
         size += 4;
-        print();
     }
     short getCount() {
         return compactWeirdoInt((short) (start + size));
     }
 
-    void print(){
-        System.out.print(("RAW TRANSACTION:" + System.lineSeparator()));
-        System.out.print("starts at: " + start + System.lineSeparator());
-        System.out.print("version: " + version + System.lineSeparator());
-        System.out.print("size: " + size + System.lineSeparator());
-        System.out.print("input count: " + input_count + System.lineSeparator());
-        System.out.print("output count: " + output_count + System.lineSeparator());
-        System.out.print("lockTimeStart: " + lockTimeStart + System.lineSeparator());
-    }
-
     short ignoreInput(short bytesIgnored) {
         short signature_scrip_size = compactWeirdoInt((short) (bytesIgnored + 36));
-        System.out.print("signature_script_size = " + signature_scrip_size + System.lineSeparator());
         return (short) (signature_scrip_size + 40 + byteSizeOfCWI(signature_scrip_size));
     }
 }
