@@ -1,6 +1,9 @@
 package tests;
 
+import applet.MainApplet;
 import com.licel.jcardsim.smartcardio.CardSimulator;
+import com.licel.jcardsim.utils.AIDUtil;
+import javacard.framework.AID;
 import main.Download;
 import main.Upload;
 import main.AppletControl;
@@ -86,9 +89,9 @@ public class AppletTest extends BaseTest {
     @Test
     public void transaction1() throws Exception {
         byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction1);
+        Download download = new Download();
         CardSimulator simulator = new CardSimulator();
         AppletControl ac = new AppletControl(simulator, transaction);
-        Download download = new Download();
         ac.UploadTransaction();
         assert download.downloadNumOfInp(simulator) == 1;
         assert download.downloadNumOfOut(simulator) == 2;
@@ -116,8 +119,8 @@ public class AppletTest extends BaseTest {
         assert download.downloadNumOfOut(simulator) == 2;
     }
 
-    @Test
-    static void runAllTests() throws Exception {
+    //@Test
+    public void runAllTests() throws Exception {
         transactionTestTemplate((byte) 1, (byte) 2, AppletControl.fromHex(TransactionsImported.validTransaction1));
         // Case: PSBT with one P2PKH input. Outputs are empty
 

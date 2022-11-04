@@ -1,9 +1,13 @@
 package main;
 
 import applet.AppletInstructions;
+import applet.MainApplet;
 import com.licel.jcardsim.base.CardManager;
 import com.licel.jcardsim.base.Simulator;
 import com.licel.jcardsim.smartcardio.CardSimulator;
+import com.licel.jcardsim.utils.AIDUtil;
+import javacard.framework.AID;
+
 import java.util.Arrays;
 
 public class AppletControl {
@@ -50,21 +54,33 @@ public class AppletControl {
 
     public AppletControl(String psbt) throws Exception {
         simulator = new CardSimulator();
+        AID appletAID = AIDUtil.create("F000000001");
+        simulator.installApplet(appletAID, MainApplet.class);
+        simulator.selectApplet(appletAID);
         this.psbt = fromHex(psbt);
     }
 
     public AppletControl(CardSimulator sim, String psbt) throws Exception {
         simulator = sim;
+        AID appletAID = AIDUtil.create("F000000001");
+        simulator.installApplet(appletAID, MainApplet.class);
+        simulator.selectApplet(appletAID);
         this.psbt = fromHex(psbt);
     }
 
     public AppletControl(CardSimulator sim, byte[] psbt) throws Exception {
         simulator = sim;
+        AID appletAID = AIDUtil.create("F000000001");
+        simulator.installApplet(appletAID, MainApplet.class);
+        simulator.selectApplet(appletAID);
         this.psbt = psbt;
     }
 
     public AppletControl(byte[] psbt) throws Exception {
         simulator = new CardSimulator();
+        AID appletAID = AIDUtil.create("F000000001");
+        simulator.installApplet(appletAID, MainApplet.class);
+        simulator.selectApplet(appletAID);
         this.psbt = psbt;
     }
 
