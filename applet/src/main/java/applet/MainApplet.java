@@ -109,17 +109,20 @@ public class MainApplet extends Applet implements MultiSelectable {
             short from = (short) ((apduBuffer[ISO7816.OFFSET_CDATA] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 1] & 0xff));
             short to = (short) ((apduBuffer[ISO7816.OFFSET_CDATA + 2] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 3] & 0xff));
             if (from < 0 || to > PSBTdata.length) {
+		return;
+		/**
                 try {
-                    throw new Exception("Can't download data outside of array!");
+                    throw new Exception((short) (0x8888));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else if (to - from < 0) {
                 try {
-                    throw new Exception("Negate amount of bytes can't be transferred!");
+                    throw new Exception((short) (0x8887));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+		*/
             }
             FromApplet.send_data(apdu, PSBTdata, from, to);
         }

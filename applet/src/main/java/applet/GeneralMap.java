@@ -20,7 +20,7 @@ public class GeneralMap {
 
     public void fill(short arrayIndex) {
         map_start = (short) (arrayIndex + 1);
-        while ((PSBTdata[arrayIndex + map_size] & 0xff) != 0x00 && current_key_pair < NUM_OF_KEYPAIR - 1) {
+        while ((PSBTdata[(short) (arrayIndex + map_size)] & 0xff) != (short)  0x00 && current_key_pair < (short) (NUM_OF_KEYPAIR - 1)) {
             current_key_pair++;
             key_pairs[current_key_pair].fill((short) (arrayIndex + map_size));
             map_size += key_pairs[current_key_pair].getSize();

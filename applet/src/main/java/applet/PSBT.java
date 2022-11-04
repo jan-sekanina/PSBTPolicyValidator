@@ -27,7 +27,7 @@ public class PSBT {
                  ((PSBTdata[2] & 0xff) != 0x62) ||
                  ((PSBTdata[3] & 0xff) != 0x74) ||
                  ((PSBTdata[4] & 0xff) != 0xff)) {
-             throw new Exception("Unsupported (black and forbidden) magic!");
+	     return;
          }
 
         byte_size += (short) 5;
