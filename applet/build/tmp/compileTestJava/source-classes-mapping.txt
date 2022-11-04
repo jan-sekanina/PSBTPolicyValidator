@@ -1,18 +1,6 @@
 tests/TransactionsImported.java
  tests.TransactionsImported
-tests/Upload.java
- tests.Upload
-tests/Download.java
- tests.Download
-tests/ImpTrxUnitTests.java
- tests.ImpTrxUnitTests
-tests/AppletComunicationTools.java
- tests.AppletComunicationTools
 tests/BaseTest.java
  tests.BaseTest
-tests/MyTests.java
- tests.MyTests
-tests/AppletControl.java
- tests.AppletControl
 tests/AppletTest.java
  tests.AppletTest

@@ -1,5 +1,10 @@
 package tests;
 
+import com.licel.jcardsim.smartcardio.CardSimulator;
+import main.Download;
+import main.Upload;
+import main.AppletControl;
+
 import cz.muni.fi.crocs.rcard.client.CardType;
 import org.junit.Assert;
 import org.junit.jupiter.api.*;
@@ -63,6 +68,97 @@ public class AppletTest extends BaseTest {
     }
 
     @Test
+    public void hel() throws Exception {
+        CardSimulator sim = new CardSimulator();
+        Download dwn = new Download();
+        AppletControl appletControl = new AppletControl(sim, TransactionsImported.validTransaction1);
+        String welcome = "I am so fucking happy I finally understand how this works!" + System.lineSeparator();
+        byte[] welcomeB = welcome.getBytes(StandardCharsets.UTF_8);
+        final CommandAPDU cmd = new CommandAPDU(0x00, 0x80, 0, 0, welcomeB, 0, welcomeB.length, 32);
+        final ResponseAPDU responseAPDU = connect().transmit(cmd);
+
+        Assertions.assertNotNull(responseAPDU);
+        Assertions.assertEquals(0x9000, responseAPDU.getSW());
+        Assertions.assertNotNull(responseAPDU.getBytes());
+        System.out.print(Arrays.toString(responseAPDU.getBytes()) + System.lineSeparator());
+        System.out.print("Test hell: passed" + System.lineSeparator());
+    }
+    @Test
+    public void transaction1() throws Exception {
+        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction1);
+        CardSimulator simulator = new CardSimulator();
+        AppletControl ac = new AppletControl(simulator, transaction);
+        Download download = new Download();
+        ac.UploadTransaction();
+        assert download.downloadNumOfInp(simulator) == 1;
+        assert download.downloadNumOfOut(simulator) == 2;
+    }
+
+    @Test
+    public void transaction2() throws Exception {
+        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction2);
+        CardSimulator simulator = new CardSimulator();
+        AppletControl ac = new AppletControl(simulator, transaction);
+        Download download = new Download();
+        ac.UploadTransaction();
+        assert download.downloadNumOfInp(simulator) == 2;
+        assert download.downloadNumOfOut(simulator) == 2;
+    }
+
+    @Test
+    public void transaction3() throws Exception {
+        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction3);
+        CardSimulator simulator = new CardSimulator();
+        AppletControl ac = new AppletControl(simulator, transaction);
+        Download download = new Download();
+        ac.UploadTransaction();
+        assert download.downloadNumOfInp(simulator) == 1;
+        assert download.downloadNumOfOut(simulator) == 2;
+    }
+
+    @Test
+    static void runAllTests() throws Exception {
+        transactionTestTemplate((byte) 1, (byte) 2, AppletControl.fromHex(TransactionsImported.validTransaction1));
+        // Case: PSBT with one P2PKH input. Outputs are empty
+
+        transactionTestTemplate((byte) 2, (byte) 2, AppletControl.fromHex(TransactionsImported.validTransaction2));
+        // Case: PSBT with one P2PKH input and one P2SH-P2WPKH input. First input is signed and finalized. Outputs are empty
+
+        transactionTestTemplate((byte) 1, (byte) 2, AppletControl.fromHex(TransactionsImported.validTransaction3));
+        // Case: PSBT with one P2PKH input which has a non-final scriptSig and has a sighash type specified. Outputs are empty
+
+        transactionTestTemplate((byte) 2, (byte) 2, AppletControl.fromHex(TransactionsImported.validTransaction4));
+        // Case: PSBT with one P2PKH input and one P2SH-P2WPKH input both with non-final scriptSigs. P2SH-P2WPKH input's redeemScript is available. Outputs filled.
+
+        transactionTestTemplate((byte) 1, (byte) 1, AppletControl.fromHex(TransactionsImported.validTransaction5));
+        // Case: PSBT with one P2SH-P2WSH input of a 2-of-2 multisig, redeemScript, witnessScript, and keypaths are available. Contains one signature.
+
+        transactionTestTemplate((byte) 1, (byte) 1, AppletControl.fromHex(TransactionsImported.validTransaction6));
+        // Case: PSBT with one P2WSH input of a 2-of-2 multisig. witnessScript, keypaths, and global xpubs are available. Contains no signatures. Outputs filled.
+
+        transactionTestTemplate((byte) 1, (byte) 1, AppletControl.fromHex(TransactionsImported.validTransaction7));
+        // Case: PSBT with unknown types in the inputs.
+
+        transactionTestTemplate((byte) 2, (byte) 2, AppletControl.fromHex(TransactionsImported.validTransaction8));
+        // Case: PSBT with `PSBT_GLOBAL_XPUB`
+
+        transactionTestTemplate((byte) 0, (byte) 0, AppletControl.fromHex(TransactionsImported.validTransaction9));
+        // Case: PSBT with global unsigned tx that has 0 inputs and 0 outputs
+
+        transactionTestTemplate((byte) 0, (byte) 2, AppletControl.fromHex(TransactionsImported.validTransaction10));
+        // Case: PSBT with 0 inputs
+    }
+
+
+    static void transactionTestTemplate(byte expectedInput, byte expectedOutput, byte[] transaction) throws Exception {
+        CardSimulator simulator = new CardSimulator();
+        AppletControl ac = new AppletControl(simulator, transaction);
+        Download download = new Download();
+        ac.UploadTransaction();
+        assert download.downloadNumOfInp(simulator) == expectedInput;
+        assert download.downloadNumOfOut(simulator) == expectedOutput;
+    }
+    //@Test
     public void callMyTest() throws Exception {
         //AppletControl AC1stTransaction = new AppletControl(TransactionsImported.validTransaction1);
         //AppletControl AC2stTransaction = new AppletControl(TransactionsImported.validTransaction2);

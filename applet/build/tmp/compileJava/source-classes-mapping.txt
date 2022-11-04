@@ -4,31 +4,33 @@ applet/Key.java
  applet.Key
 applet/Value.java
  applet.Value
+main/TransactionsImported.java
+ main.TransactionsImported
 applet/GeneralMap.java
  applet.GeneralMap
 applet/AppletInstructions.java
  applet.AppletInstructions
-applet/KeyPair.java
- applet.KeyPair
-applet/GlobalUnsignedTXOutput.java
- applet.GlobalUnsignedTXOutput
-applet/GlobalUnsignedTX.java
- applet.GlobalUnsignedTX
-applet/FromApplet.java
- applet.FromApplet
-applet/GlobalUnsignedTXInput.java
- applet.GlobalUnsignedTXInput
-applet/SekriptInstructions.java
- applet.SekriptInstructions
-applet/Policy.java
- applet.Policy
-applet/Stack.java
- applet.Stack
-applet/SecretAndTimeStorage.java
- applet.SecretAndTimeStorage
-applet/GlobalMap.java
- applet.GlobalMap
-applet/PSBT.java
- applet.PSBT
 applet/MainApplet.java
  applet.MainApplet
+main/Download.java
+ main.Download
+applet/KeyPair.java
+ applet.KeyPair
+applet/GlobalMap.java
+ applet.GlobalMap
+applet/GlobalUnsignedTX.java
+ applet.GlobalUnsignedTX
+applet/PSBT.java
+ applet.PSBT
+applet/GlobalUnsignedTXInput.java
+ applet.GlobalUnsignedTXInput
+main/AppletControl.java
+ main.AppletControl
+main/Run.java
+ main.Run
+applet/FromApplet.java
+ applet.FromApplet
+applet/GlobalUnsignedTXOutput.java
+ applet.GlobalUnsignedTXOutput
+main/Upload.java
+ main.Upload
