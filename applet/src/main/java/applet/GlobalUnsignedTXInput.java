@@ -5,10 +5,10 @@ import static applet.Tools.compactWeirdoInt;
 
 public class GlobalUnsignedTXInput {
     short previous_output_start = -1;
-    Short script_size_start = null;
-    Short script_size = null;
-    Short script_sig_start = null;
-    Short sequence_start = null;
+    short script_size_start = -1;
+    short script_size = -1;
+    short script_sig_start = -1;
+    short sequence_start = -1;
     short size = 0;
 
     void fill(short start){

@@ -4,9 +4,9 @@ import static applet.AppletInstructions.*;
 import static applet.MainApplet.PSBTdata;
 
 public class GlobalMap extends GeneralMap {
-    Short input_maps_total = null;
-    Short output_maps_total = null;
-    Short PSBTversion = null;
+    short input_maps_total = -1;
+    short output_maps_total = -1;
+    short PSBTversion = -1;
     GlobalUnsignedTX globalUnsignedTX = new GlobalUnsignedTX();
 
     public void fill(short arrayIndex) {

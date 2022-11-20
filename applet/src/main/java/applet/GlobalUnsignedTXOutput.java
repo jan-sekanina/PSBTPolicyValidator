@@ -5,9 +5,9 @@ import static applet.Tools.compactWeirdoInt;
 
 public class GlobalUnsignedTXOutput {
     short value_start = -1;
-    Short script_size_tart = null;
-    Short script_size = null;
-    Short script_pub_key_start = null;
+    short script_size_tart = -1;
+    short script_size = -1;
+    short script_pub_key_start = -1;
     short size = 0;
 
     void fill(short start){

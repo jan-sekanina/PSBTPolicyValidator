@@ -41,14 +41,14 @@ public class PSBT {
 
         //TODO: check that current IOMap != numOfIOMaps
 
-        while (global_map.input_maps_total != null && current_input_map < global_map.input_maps_total) {
+        while (global_map.input_maps_total != -1 && current_input_map < global_map.input_maps_total) {
             input_maps[current_input_map].fill(byte_size);
             byte_size += input_maps[current_input_map].map_size;
             byte_size++;
             current_input_map++;
         }
 
-        while (global_map.output_maps_total != null && current_output_map < global_map.output_maps_total) {
+        while (global_map.output_maps_total != -1 && current_output_map < global_map.output_maps_total) {
             output_maps[current_output_map].fill(byte_size);
             byte_size += output_maps[current_output_map].map_size;
             byte_size++;

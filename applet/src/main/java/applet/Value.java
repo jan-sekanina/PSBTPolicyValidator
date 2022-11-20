@@ -4,7 +4,7 @@ import static applet.MainApplet.PSBTdata;
 
 public class Value {
     public short start = -1;
-    public Short value_len = null;
+    public short value_len = -1;
     public short value_len_bytes = 1;
 
     public void fill(short arrayIndex) {
@@ -20,10 +20,6 @@ public class Value {
     }
 
     public byte getByte(short index) {
-        return PSBTdata[start + value_len_bytes + index];
-    }
-
-    public void setByte(short index, byte newByte) {
-        PSBTdata[start + value_len_bytes + index] = newByte;
+        return PSBTdata[(short) (start + value_len_bytes + index)];
     }
 }

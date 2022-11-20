@@ -70,7 +70,7 @@ public class MainApplet extends Applet implements MultiSelectable {
                 try {
                     psbt.fill();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //DO NOTHING
                 }
             }
         }
@@ -128,7 +128,7 @@ public class MainApplet extends Applet implements MultiSelectable {
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_VERSION){
-            if (psbt.global_map.PSBTversion != null) {
+            if (psbt.global_map.PSBTversion != -1) {
                 FromApplet.send_data(apdu, psbt.global_map.PSBTversion);
             }
             else {

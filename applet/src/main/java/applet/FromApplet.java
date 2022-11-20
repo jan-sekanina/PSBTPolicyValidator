@@ -3,8 +3,6 @@ package applet;
 import javacard.framework.APDU;
 import javacard.framework.Util;
 
-import java.util.Arrays;
-
 
 public class FromApplet {
     /**

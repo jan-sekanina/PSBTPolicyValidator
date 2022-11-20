@@ -25,7 +25,7 @@ public class Tools {
      */
     public static short compactWeirdoInt(short int_start) {
         if ((short) (PSBTdata[int_start] & 0xff) == 0xfd) {
-            return (Tools.toShort(PSBTdata[int_start + 1], PSBTdata[int_start + 2]));
+            return (Tools.toShort(PSBTdata[(short) (int_start + 1)], PSBTdata[(short) (int_start + 2)]));
         }
         return (short) (PSBTdata[int_start] & 0xff);
     }

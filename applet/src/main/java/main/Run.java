@@ -1,13 +1,7 @@
 package main;
 
-import applet.MainApplet;
 import com.licel.jcardsim.smartcardio.CardSimulator;
-import com.licel.jcardsim.utils.AIDUtil;
-import javacard.framework.AID;
 
-import javax.smartcardio.CommandAPDU;
-import javax.smartcardio.ResponseAPDU;
-import java.util.Scanner;
 
 public class Run {
     public static void main(String[] args) throws Exception {

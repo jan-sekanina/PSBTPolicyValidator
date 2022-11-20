@@ -4,9 +4,9 @@ import static applet.MainApplet.PSBTdata;
 
 public class Key {
     public short start = -1;
-    public Short key_len = null;
+    public short key_len = -1;
     public short key_len_bytes = 1;
-    public Short key_type = null;
+    public short key_type = -1;
 
     public void fill(short arrayIndex) {
         start = arrayIndex;
@@ -21,11 +21,4 @@ public class Key {
         return (short) (key_len_bytes + key_len);
     }
 
-    public byte getByte(short index) {
-        return PSBTdata[start + key_len_bytes + index];
-    }
-
-    public void setByte(short index, byte newByte) {
-        PSBTdata[start + key_len_bytes + index] = newByte;
-    }
 }

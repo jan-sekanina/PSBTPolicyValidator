@@ -12,17 +12,17 @@ import static applet.Tools.compactWeirdoInt;
  */
 public class GlobalUnsignedTX {
     final static short MAX_COUNT_OF_IO = 8;
-    Short start = null;
-    Short version = null;
+    short start = -1;
+    short version = -1;
     short size = 0;
 
-    Short input_count = null;
+    short input_count = -1;
     GlobalUnsignedTXInput[] inputs = new GlobalUnsignedTXInput[MAX_COUNT_OF_IO];
 
-    Short output_count = null;
+    short output_count = -1;
     GlobalUnsignedTXOutput[] outputs = new GlobalUnsignedTXOutput[MAX_COUNT_OF_IO];
 
-    Short lockTimeStart = null;
+    short lockTimeStart = -1;
 
     GlobalUnsignedTX(){
         for (short i = 0; i < MAX_COUNT_OF_IO; i++){
