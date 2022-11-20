@@ -99,6 +99,7 @@ public class AppletTest extends BaseTest {
         download.downloadInputV0(simulator, (byte) 0);
         download.downloadOutputV0(simulator, (byte) 0);
         download.downloadOutputV0(simulator, (byte) 1);
+        System.out.print("Test transaction1: passed" + System.lineSeparator());
     }
 
     @Test
@@ -115,6 +116,7 @@ public class AppletTest extends BaseTest {
         download.downloadInputV0(simulator, (byte) 1);
         download.downloadOutputV0(simulator, (byte) 0);
         download.downloadOutputV0(simulator, (byte) 1);
+        System.out.print("Test transaction2: passed" + System.lineSeparator());
     }
 
     @Test
@@ -130,6 +132,7 @@ public class AppletTest extends BaseTest {
         download.downloadInputV0(simulator, (byte) 0);
         download.downloadOutputV0(simulator, (byte) 0);
         download.downloadOutputV0(simulator, (byte) 1);
+        System.out.print("Test transaction3: passed" + System.lineSeparator());
     }
 
     @Test
@@ -146,6 +149,7 @@ public class AppletTest extends BaseTest {
         download.downloadInputV0(simulator, (byte) 1);
         download.downloadOutputV0(simulator, (byte) 0);
         download.downloadOutputV0(simulator, (byte) 1);
+        System.out.print("Test transaction4: passed" + System.lineSeparator());
     }
 
     @Test
@@ -160,6 +164,7 @@ public class AppletTest extends BaseTest {
         download.downloadSize(simulator);
         download.downloadInputV0(simulator, (byte) 0);
         download.downloadOutputV0(simulator, (byte) 0);
+        System.out.print("Test transaction5: passed" + System.lineSeparator());
     }
 
     @Test
@@ -174,6 +179,7 @@ public class AppletTest extends BaseTest {
         download.downloadSize(simulator);
         download.downloadInputV0(simulator, (byte) 0);
         download.downloadOutputV0(simulator, (byte) 0);
+        System.out.print("Test transaction6: passed" + System.lineSeparator());
     }
 
     @Test
@@ -188,6 +194,7 @@ public class AppletTest extends BaseTest {
         download.downloadSize(simulator);
         download.downloadInputV0(simulator, (byte) 0);
         download.downloadOutputV0(simulator, (byte) 0);
+        System.out.print("Test transaction7: passed" + System.lineSeparator());
     }
 
     @Test
@@ -204,6 +211,7 @@ public class AppletTest extends BaseTest {
         download.downloadInputV0(simulator, (byte) 1);
         download.downloadOutputV0(simulator, (byte) 0);
         download.downloadOutputV0(simulator, (byte) 1);
+        System.out.print("Test transaction8: passed" + System.lineSeparator());
     }
 
     @Test
@@ -216,6 +224,7 @@ public class AppletTest extends BaseTest {
         assert download.downloadNumOfInp(simulator) == 0;
         assert download.downloadNumOfOut(simulator) == 0;
         download.downloadSize(simulator);
+        System.out.print("Test transaction9: passed" + System.lineSeparator());
     }
 
     @Test
@@ -230,6 +239,7 @@ public class AppletTest extends BaseTest {
         download.downloadSize(simulator);
         download.downloadOutputV0(simulator, (byte) 0);
         download.downloadOutputV0(simulator, (byte) 1);
+        System.out.print("Test transaction10: passed" + System.lineSeparator());
     }
 
     //@Test

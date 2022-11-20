@@ -21,15 +21,15 @@ public class GlobalMap extends GeneralMap {
             }
 
             if (key_pairs[current_key_pair].key.key_type == PSBT_GLOBAL_INPUT_COUNT) {
-                input_maps_total = (short) key_pairs[current_key_pair].value.getByte((short) 0);
+                input_maps_total = key_pairs[current_key_pair].value.getByte((short) 0);
             }
 
             if (key_pairs[current_key_pair].key.key_type == PSBT_GLOBAL_OUTPUT_COUNT) {
-                output_maps_total = (short) key_pairs[current_key_pair].value.getByte((short) 0);
+                output_maps_total = key_pairs[current_key_pair].value.getByte((short) 0);
             }
 
             if (key_pairs[current_key_pair].key.key_type == PSBT_GLOBAL_TX_VERSION) {
-                PSBTversion = (short) key_pairs[current_key_pair].value.getByte((short) 3);
+                PSBTversion = key_pairs[current_key_pair].value.getByte((short) 3);
             }
 
             // TODO maybe add more special key types here later on

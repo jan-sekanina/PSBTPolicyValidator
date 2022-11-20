@@ -4,10 +4,12 @@ import applet.AppletInstructions;
 import applet.MainApplet;
 import com.licel.jcardsim.base.CardManager;
 import com.licel.jcardsim.base.Simulator;
+import com.licel.jcardsim.bouncycastle.util.encoders.Hex;
 import com.licel.jcardsim.smartcardio.CardSimulator;
 import com.licel.jcardsim.utils.AIDUtil;
 import javacard.framework.AID;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class AppletControl {
@@ -39,10 +41,12 @@ public class AppletControl {
         for (i = 0; i < inps; i++){
             System.out.print("Input with index: " + i + System.lineSeparator());
             System.out.print(Arrays.toString(md.downloadInputV0(simulator, (byte) i)) + System.lineSeparator());
+            System.out.print(bytesToHex((md.downloadInputV0(simulator, (byte) i))) + System.lineSeparator());
         }
         for (i = 0; i < outs; i++){
             System.out.print("Output with index: " + i + System.lineSeparator());
             System.out.print(Arrays.toString(md.downloadOutputV0(simulator, (byte) i)) + System.lineSeparator());
+            System.out.print(bytesToHex((md.downloadOutputV0(simulator, (byte) i))) + System.lineSeparator());
         }
     }
 
@@ -98,6 +102,18 @@ public class AppletControl {
         }
 
         return res;
+    }
+   public String bytesToHex(byte[] bytes) {
+        // nemam tucha jestli to funguje dobře
+       StringBuilder res = new StringBuilder();
+       int cb;
+
+       for (byte aByte : bytes) {
+           cb = aByte & 0xFF;
+           res.append(Integer.toHexString(cb / 16));
+           res.append(Integer.toHexString(cb % 16));
+       }
+    return res.toString();
     }
 }
 

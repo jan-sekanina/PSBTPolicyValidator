@@ -5,7 +5,6 @@ import com.licel.jcardsim.smartcardio.CardSimulator;
 
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
-import java.nio.charset.StandardCharsets;
 
 /**
  * class of my tests
