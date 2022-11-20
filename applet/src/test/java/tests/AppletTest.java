@@ -95,6 +95,10 @@ public class AppletTest extends BaseTest {
         ac.UploadTransaction();
         assert download.downloadNumOfInp(simulator) == 1;
         assert download.downloadNumOfOut(simulator) == 2;
+        download.downloadSize(simulator);
+        download.downloadInputV0(simulator, (byte) 0);
+        download.downloadOutputV0(simulator, (byte) 0);
+        download.downloadOutputV0(simulator, (byte) 1);
     }
 
     @Test
@@ -106,6 +110,11 @@ public class AppletTest extends BaseTest {
         ac.UploadTransaction();
         assert download.downloadNumOfInp(simulator) == 2;
         assert download.downloadNumOfOut(simulator) == 2;
+        download.downloadSize(simulator);
+        download.downloadInputV0(simulator, (byte) 0);
+        download.downloadInputV0(simulator, (byte) 1);
+        download.downloadOutputV0(simulator, (byte) 0);
+        download.downloadOutputV0(simulator, (byte) 1);
     }
 
     @Test
@@ -117,6 +126,110 @@ public class AppletTest extends BaseTest {
         ac.UploadTransaction();
         assert download.downloadNumOfInp(simulator) == 1;
         assert download.downloadNumOfOut(simulator) == 2;
+        download.downloadSize(simulator);
+        download.downloadInputV0(simulator, (byte) 0);
+        download.downloadOutputV0(simulator, (byte) 0);
+        download.downloadOutputV0(simulator, (byte) 1);
+    }
+
+    @Test
+    public void transaction4() throws Exception {
+        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction4);
+        CardSimulator simulator = new CardSimulator();
+        AppletControl ac = new AppletControl(simulator, transaction);
+        Download download = new Download();
+        ac.UploadTransaction();
+        assert download.downloadNumOfInp(simulator) == 2;
+        assert download.downloadNumOfOut(simulator) == 2;
+        download.downloadSize(simulator);
+        download.downloadInputV0(simulator, (byte) 0);
+        download.downloadInputV0(simulator, (byte) 1);
+        download.downloadOutputV0(simulator, (byte) 0);
+        download.downloadOutputV0(simulator, (byte) 1);
+    }
+
+    @Test
+    public void transaction5() throws Exception {
+        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction5);
+        CardSimulator simulator = new CardSimulator();
+        AppletControl ac = new AppletControl(simulator, transaction);
+        Download download = new Download();
+        ac.UploadTransaction();
+        assert download.downloadNumOfInp(simulator) == 1;
+        assert download.downloadNumOfOut(simulator) == 1;
+        download.downloadSize(simulator);
+        download.downloadInputV0(simulator, (byte) 0);
+        download.downloadOutputV0(simulator, (byte) 0);
+    }
+
+    @Test
+    public void transaction6() throws Exception {
+        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction6);
+        CardSimulator simulator = new CardSimulator();
+        AppletControl ac = new AppletControl(simulator, transaction);
+        Download download = new Download();
+        ac.UploadTransaction();
+        assert download.downloadNumOfInp(simulator) == 1;
+        assert download.downloadNumOfOut(simulator) == 1;
+        download.downloadSize(simulator);
+        download.downloadInputV0(simulator, (byte) 0);
+        download.downloadOutputV0(simulator, (byte) 0);
+    }
+
+    @Test
+    public void transaction7() throws Exception {
+        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction7);
+        CardSimulator simulator = new CardSimulator();
+        AppletControl ac = new AppletControl(simulator, transaction);
+        Download download = new Download();
+        ac.UploadTransaction();
+        assert download.downloadNumOfInp(simulator) == 1;
+        assert download.downloadNumOfOut(simulator) == 1;
+        download.downloadSize(simulator);
+        download.downloadInputV0(simulator, (byte) 0);
+        download.downloadOutputV0(simulator, (byte) 0);
+    }
+
+    @Test
+    public void transaction8() throws Exception {
+        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction8);
+        CardSimulator simulator = new CardSimulator();
+        AppletControl ac = new AppletControl(simulator, transaction);
+        Download download = new Download();
+        ac.UploadTransaction();
+        assert download.downloadNumOfInp(simulator) == 2;
+        assert download.downloadNumOfOut(simulator) == 2;
+        download.downloadSize(simulator);
+        download.downloadInputV0(simulator, (byte) 0);
+        download.downloadInputV0(simulator, (byte) 1);
+        download.downloadOutputV0(simulator, (byte) 0);
+        download.downloadOutputV0(simulator, (byte) 1);
+    }
+
+    @Test
+    public void transaction9() throws Exception {
+        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction9);
+        CardSimulator simulator = new CardSimulator();
+        AppletControl ac = new AppletControl(simulator, transaction);
+        Download download = new Download();
+        ac.UploadTransaction();
+        assert download.downloadNumOfInp(simulator) == 0;
+        assert download.downloadNumOfOut(simulator) == 0;
+        download.downloadSize(simulator);
+    }
+
+    @Test
+    public void transaction10() throws Exception {
+        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction10);
+        CardSimulator simulator = new CardSimulator();
+        AppletControl ac = new AppletControl(simulator, transaction);
+        Download download = new Download();
+        ac.UploadTransaction();
+        assert download.downloadNumOfInp(simulator) == 0;
+        assert download.downloadNumOfOut(simulator) == 2;
+        download.downloadSize(simulator);
+        download.downloadOutputV0(simulator, (byte) 0);
+        download.downloadOutputV0(simulator, (byte) 1);
     }
 
     //@Test
