@@ -51,8 +51,8 @@ public class AppletInstructions {
     public static final short CLASS_DOWNLOAD_INPUT_MAP = 6; // p1 is position of map, map must be present, first is 0
     public static final short CLASS_DOWNLOAD_OUTPUT_MAP = 7; // --above--
 
-    public static final short CLASS_DOWNLOAD_INPUT_V0 = 12;
-    public static final short CLASS_DOWNLOAD_OUTPUT_V0 = 13;
+    public static final short CLASS_DOWNLOAD_INPUT = 12;
+    public static final short CLASS_DOWNLOAD_OUTPUT = 13;
     public static final short CLASS_DOWNLOAD_GLOBAL_ALL = 8;
     public static final short CLASS_DOWNLOAD_INPUT_ALL = 9;
     public static final short CLASS_DOWNLOAD_OUTPUT_ALL = 10;
@@ -67,7 +67,6 @@ public class AppletInstructions {
     public static final short INS_UPLOAD = 1;
     public static final short INS_FINISH = 2;
     public static final short INS_DOWNLOAD_ARRAY = 3;
-
 
     //global keytype bytes below
     public static final byte PSBT_GLOBAL_UNSIGNED_TX = 0x00; // p2

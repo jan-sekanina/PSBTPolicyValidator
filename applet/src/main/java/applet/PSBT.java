@@ -9,10 +9,10 @@ public class PSBT {
     public GeneralMap[] output_maps = new GeneralMap[MAX_OF_IO_MAPS];
 
 
-    public short current_input_map = 0; // how many input maps are filled
-    public short current_output_map = 0; // above for output
+    public static short current_input_map = 0; // how many input maps are filled
+    public static short current_output_map = 0; // above for output
 
-    short byte_size = 0;
+    static short byte_size = 0;
 
     public PSBT() {
         for (short i = 0; i < MAX_OF_IO_MAPS; i++){
@@ -41,14 +41,14 @@ public class PSBT {
 
         //TODO: check that current IOMap != numOfIOMaps
 
-        while (global_map.input_maps_total != -1 && current_input_map < global_map.input_maps_total) {
+        while (current_input_map < global_map.input_maps_total) {
             input_maps[current_input_map].fill(byte_size);
             byte_size += input_maps[current_input_map].map_size;
             byte_size++;
             current_input_map++;
         }
 
-        while (global_map.output_maps_total != -1 && current_output_map < global_map.output_maps_total) {
+        while (current_output_map < global_map.output_maps_total) {
             output_maps[current_output_map].fill(byte_size);
             byte_size += output_maps[current_output_map].map_size;
             byte_size++;

@@ -19,7 +19,7 @@ public class Run {
 
         AppletControl ap = new AppletControl(simulator, args[0]);
         ap.UploadTransaction();
-        ap.DownloadDebugV0();
+        ap.DownloadDebug();
     }
 
 }

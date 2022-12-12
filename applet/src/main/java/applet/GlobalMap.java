@@ -6,7 +6,7 @@ import static applet.MainApplet.PSBTdata;
 public class GlobalMap extends GeneralMap {
     short input_maps_total = -1;
     short output_maps_total = -1;
-    short PSBTversion = -1;
+    static short PSBTversion = 0;
     GlobalUnsignedTX globalUnsignedTX = new GlobalUnsignedTX();
 
     public void fill(short arrayIndex) {
@@ -29,7 +29,7 @@ public class GlobalMap extends GeneralMap {
             }
 
             if (key_pairs[current_key_pair].key.key_type == PSBT_GLOBAL_TX_VERSION) {
-                PSBTversion = key_pairs[current_key_pair].value.getByte((short) 3);
+                PSBTversion = key_pairs[current_key_pair].value.getByte((short) 0);
             }
 
             // TODO maybe add more special key types here later on

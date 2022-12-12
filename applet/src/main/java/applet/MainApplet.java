@@ -128,32 +128,49 @@ public class MainApplet extends Applet implements MultiSelectable {
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_VERSION){
-            if (psbt.global_map.PSBTversion != -1) {
-                FromApplet.send_data(apdu, psbt.global_map.PSBTversion);
-            }
-            else {
-                FromApplet.send_data(apdu, (short) (-1));
-            }
+            FromApplet.send_data(apdu, GlobalMap.PSBTversion);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_SIZE){
-            FromApplet.send_data(apdu, offset);
+            FromApplet.send_data(apdu, PSBT.byte_size);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_INPUT_V0){
-            FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.input_count);
+            if (GlobalMap.PSBTversion == 0) {
+                FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.input_count);
+            }
+            if (GlobalMap.PSBTversion == 2) {
+                FromApplet.send_data(apdu, PSBT.current_input_map);
+            }
+
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_OUTPUT_V0){
-            FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.output_count);
+            if (GlobalMap.PSBTversion == 0) {
+                FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.output_count);
+            }
+            if (GlobalMap.PSBTversion == 2) {
+                FromApplet.send_data(apdu, PSBT.current_output_map);
+            }
         }
 
-        if (cla == AppletInstructions.CLASS_DOWNLOAD_INPUT_V0){
-            FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.inputs[p1]);
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_INPUT){
+            if (GlobalMap.PSBTversion == 0) {
+                FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.inputs[p1]);
+            }
+
+            if (GlobalMap.PSBTversion == 2) {
+                FromApplet.send_data(apdu, psbt.input_maps[p1]);
+            }
         }
 
-        if (cla == AppletInstructions.CLASS_DOWNLOAD_OUTPUT_V0){
-            FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.outputs[p1]);
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_OUTPUT){
+            if (GlobalMap.PSBTversion == 0) {
+                FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.outputs[p1]);
+            }
+            if (GlobalMap.PSBTversion == 2) {
+                FromApplet.send_data(apdu, psbt.output_maps[p1]);
+            }
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_ALL) {

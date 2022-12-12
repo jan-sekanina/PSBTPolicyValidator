@@ -43,20 +43,20 @@ public class Download {
         return (short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff));
     }
 
-    public byte[] downloadInputV0(CardSimulator simulator, byte input_index) throws CardException {
+    public byte[] downloadInput(CardSimulator simulator, byte input_index) throws CardException {
         CommandAPDU cmd;
         ResponseAPDU rsp;
-        cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_INPUT_V0, 0, input_index, 0);
+        cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_INPUT, 0, input_index, 0);
         rsp = simulator.transmitCommand(cmd);
         byte[] ar = rsp.getData();
         return download(simulator ,(short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff)),
                 (short) ((ar[2] & 0xff) << 8 | (ar[3] & 0xff)));
     }
 
-    public byte[] downloadOutputV0(CardSimulator simulator, byte output_index) throws CardException {
+    public byte[] downloadOutput(CardSimulator simulator, byte output_index) throws CardException {
         CommandAPDU cmd;
         ResponseAPDU rsp;
-        cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_OUTPUT_V0, 0, output_index, 0);
+        cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_OUTPUT, 0, output_index, 0);
         rsp = simulator.transmitCommand(cmd);
         byte[] ar = rsp.getData();
         return download(simulator,(short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff)),
@@ -78,7 +78,6 @@ public class Download {
         ResponseAPDU rsp;
         short offset = 0;
         byte[] communicationArray = new byte[4];
-
 
         byte[] res = new byte[to - from];
 

@@ -3,17 +3,13 @@ package main;
 import applet.AppletInstructions;
 import applet.MainApplet;
 import com.licel.jcardsim.base.CardManager;
-import com.licel.jcardsim.base.Simulator;
-import com.licel.jcardsim.bouncycastle.util.encoders.Hex;
 import com.licel.jcardsim.smartcardio.CardSimulator;
 import com.licel.jcardsim.utils.AIDUtil;
 import javacard.framework.AID;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-
 public class AppletControl {
     CardSimulator simulator = null;
+    CardManager manager = null;
     Upload mu = new Upload();
     Download md = new Download();
     byte[] psbt = null;
@@ -26,34 +22,32 @@ public class AppletControl {
         mu.sendData(psbt, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, simulator);
     }
 
-    public void DownloadDebugV0() throws Exception {
-        System.out.print("Parsing transaction of version: " + md.downloadVersion(simulator) + (" (-1 means unspecified)") + System.lineSeparator());
-        System.out.print("And of size: " + md.downloadSize(simulator) + " bytes" + System.lineSeparator());
+    public void DownloadDebug() throws Exception {
+        System.out.print("Parsing transaction of version: " + md.downloadVersion(simulator) + System.lineSeparator());
+        System.out.print("And of size: " + md.downloadSize(simulator) + " potatoes" + System.lineSeparator()); // TODO: this is weird
         short inps = md.downloadNumOfInp(simulator);
         short outs = md.downloadNumOfOut(simulator);
         System.out.print("Number of inputs: " + inps + System.lineSeparator());
         System.out.print("Number of outputs: " + outs + System.lineSeparator());
 
-        System.out.print(Arrays.toString(md.downloadMap(simulator, AppletInstructions.CLASS_DOWNLOAD_GLOBAL_ALL, (byte) 0)) + System.lineSeparator());
+        //System.out.print(Arrays.toString(md.downloadMap(simulator, AppletInstructions.CLASS_DOWNLOAD_GLOBAL_ALL, (byte) 0)) + System.lineSeparator());
 
         int i;
 
         for (i = 0; i < inps; i++){
             System.out.print("Input with index: " + i + System.lineSeparator());
-            System.out.print(Arrays.toString(md.downloadInputV0(simulator, (byte) i)) + System.lineSeparator());
-            System.out.print(bytesToHex((md.downloadInputV0(simulator, (byte) i))) + System.lineSeparator());
+            System.out.print(bytesToHex((md.downloadInput(simulator, (byte) i))) + System.lineSeparator());
         }
         for (i = 0; i < outs; i++){
             System.out.print("Output with index: " + i + System.lineSeparator());
-            System.out.print(Arrays.toString(md.downloadOutputV0(simulator, (byte) i)) + System.lineSeparator());
-            System.out.print(bytesToHex((md.downloadOutputV0(simulator, (byte) i))) + System.lineSeparator());
+            System.out.print(bytesToHex((md.downloadOutput(simulator, (byte) i))) + System.lineSeparator());
         }
     }
 
 
-    public void AppletDebugV0() throws Exception {
+    public void AppletDebug() throws Exception {
         UploadTransaction();
-        DownloadDebugV0();
+        DownloadDebug();
     }
 
     public AppletControl(String psbt) throws Exception {
@@ -104,7 +98,6 @@ public class AppletControl {
         return res;
     }
    public String bytesToHex(byte[] bytes) {
-        // nemam tucha jestli to funguje dobře
        StringBuilder res = new StringBuilder();
        int cb;
 
