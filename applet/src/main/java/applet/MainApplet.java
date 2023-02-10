@@ -13,7 +13,9 @@ public class MainApplet extends Applet implements MultiSelectable {
     public PSBT psbt;
     public static byte[] PSBTdata;
     public static byte[] controlArray;
+    public static byte [] policy;
     short offset;
+    short locked = 0; // 0 locked, 1 - opened
 
     //private byte[] data = JCSystem.makeTransientByteArray((short) (1024 * 10),
     //		JCSystem.CLEAR_ON_DESELECT);
@@ -142,7 +144,6 @@ public class MainApplet extends Applet implements MultiSelectable {
             if (GlobalMap.PSBTversion == 2) {
                 FromApplet.send_data(apdu, PSBT.current_input_map);
             }
-
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_OUTPUT_V0){

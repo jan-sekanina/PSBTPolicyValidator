@@ -239,8 +239,6 @@ public class AppletTest extends BaseTest {
         // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 1)), ""); // sparrow refuses to open this transaction
         System.out.print("Test transaction10: passed" + System.lineSeparator());
     }
-
-    /**
     @Test
     public void transaction11() throws Exception {
         byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction11);
@@ -313,8 +311,8 @@ public class AppletTest extends BaseTest {
         // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
         // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 1)), ""); // sparrow refuses to open this transaction
     }
-    **/
-
+    /**
+*/
     //@Test
     public void runAllTests() throws Exception {
         transactionTestTemplate((byte) 1, (byte) 2, AppletControl.fromHex(TransactionsImported.validTransaction1));
