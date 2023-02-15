@@ -1,9 +1,8 @@
 package tests;
 
-import com.licel.jcardsim.smartcardio.CardSimulator;
+import applet.AppletInstructions;
+import communication.*;
 import cz.muni.fi.crocs.rcard.client.CardManager;
-import main.Download;
-import main.AppletControl;
 
 import cz.muni.fi.crocs.rcard.client.CardType;
 import org.junit.jupiter.api.*;
@@ -17,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Example test class for the applet
- * Note: If simulator cannot be started try adding "-noverify" JVM parameter
+ * Note: If manager cannot be started try adding "-noverify" JVM parameter
  *
  * @author xsvenda, Dusan Klinec (ph4r05)
  */
@@ -76,7 +75,7 @@ public class AppletTest extends BaseTest {
         String welcome = "I am so fucking happy I finally understand how this works!" + System.lineSeparator();
         byte[] welcomeB = welcome.getBytes(StandardCharsets.UTF_8);
         final CommandAPDU cmd = new CommandAPDU(0x00, 0x80, 0, 0, welcomeB, 0, welcomeB.length, 32);
-        final ResponseAPDU responseAPDU = connect().transmit(cmd);
+        final ResponseAPDU responseAPDU = man.transmit(cmd);
 
         Assertions.assertNotNull(responseAPDU);
         assertEquals(0x9000, responseAPDU.getSW());
@@ -86,233 +85,232 @@ public class AppletTest extends BaseTest {
     }
     @Test
     public void transaction1() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction1);
         Download download = new Download();
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 1;
-        assert download.downloadNumOfOut(simulator) == 2;
-        download.downloadSize(simulator);
-        assertEquals(ac.bytesToHex(download.downloadInput(simulator, (byte) 0)), "268171371edff285e937adeea4b37b78000c0566cbb3ad64641713ca42171bf60000000000feffffff");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 0)), "d3dff505000000001976a914d0c59903c5bac2868760e90fd521a4665aa7652088ac");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 1)), "00e1f5050000000017a9143545e6e33b832c47050f24d3eeb93c9c03948bc787");
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction1);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 1;
+        assert download.downloadNumOfOut(manager) == 2;
+        download.downloadSize(manager);
+        assertEquals(download.bytesToHex(download.downloadInput(manager, (byte) 0)), "268171371edff285e937adeea4b37b78000c0566cbb3ad64641713ca42171bf60000000000feffffff");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 0)), "d3dff505000000001976a914d0c59903c5bac2868760e90fd521a4665aa7652088ac");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 1)), "00e1f5050000000017a9143545e6e33b832c47050f24d3eeb93c9c03948bc787");
         System.out.print("Test transaction1: passed" + System.lineSeparator());
     }
 
     @Test
     public void transaction2() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction2);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 2;
-        assert download.downloadNumOfOut(simulator) == 2;
-        download.downloadSize(simulator);
-        assertEquals(ac.bytesToHex(download.downloadInput(simulator, (byte) 0)), "ab0949a08c5af7c49b8212f417e2f15ab3f5c33dcf153821a8139f877a5b7be40000000000feffffff");
-        assertEquals(ac.bytesToHex(download.downloadInput(simulator, (byte) 1)), "ab0949a08c5af7c49b8212f417e2f15ab3f5c33dcf153821a8139f877a5b7be40100000000feffffff");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 0)), "603bea0b000000001976a914768a40bbd740cbe81d988e71de2a4d5c71396b1d88ac");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 1)), "8e240000000000001976a9146f4620b553fa095e721b9ee0efe9fa039cca459788ac");
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction2);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 2;
+        assert download.downloadNumOfOut(manager) == 2;
+        download.downloadSize(manager);
+        assertEquals(download.bytesToHex(download.downloadInput(manager, (byte) 0)), "ab0949a08c5af7c49b8212f417e2f15ab3f5c33dcf153821a8139f877a5b7be40000000000feffffff");
+        assertEquals(download.bytesToHex(download.downloadInput(manager, (byte) 1)), "ab0949a08c5af7c49b8212f417e2f15ab3f5c33dcf153821a8139f877a5b7be40100000000feffffff");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 0)), "603bea0b000000001976a914768a40bbd740cbe81d988e71de2a4d5c71396b1d88ac");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 1)), "8e240000000000001976a9146f4620b553fa095e721b9ee0efe9fa039cca459788ac");
         System.out.print("Test transaction2: passed" + System.lineSeparator());
     }
 
     @Test
     public void transaction3() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction3);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 1;
-        assert download.downloadNumOfOut(simulator) == 2;
-        download.downloadSize(simulator);
-        assertEquals(ac.bytesToHex(download.downloadInput(simulator, (byte) 0)), "268171371edff285e937adeea4b37b78000c0566cbb3ad64641713ca42171bf60000000000feffffff");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 0)), "d3dff505000000001976a914d0c59903c5bac2868760e90fd521a4665aa7652088ac");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 1)), "00e1f5050000000017a9143545e6e33b832c47050f24d3eeb93c9c03948bc787");
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction3);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 1;
+        assert download.downloadNumOfOut(manager) == 2;
+        download.downloadSize(manager);
+        assertEquals(download.bytesToHex(download.downloadInput(manager, (byte) 0)), "268171371edff285e937adeea4b37b78000c0566cbb3ad64641713ca42171bf60000000000feffffff");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 0)), "d3dff505000000001976a914d0c59903c5bac2868760e90fd521a4665aa7652088ac");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 1)), "00e1f5050000000017a9143545e6e33b832c47050f24d3eeb93c9c03948bc787");
         System.out.print("Test transaction3: passed" + System.lineSeparator());
     }
 
     @Test
     public void transaction4() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction4);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 2;
-        assert download.downloadNumOfOut(simulator) == 2;
-        assertEquals(ac.bytesToHex(download.downloadInput(simulator, (byte) 0)), "ab0949a08c5af7c49b8212f417e2f15ab3f5c33dcf153821a8139f877a5b7be40000000000feffffff");
-        assertEquals(ac.bytesToHex(download.downloadInput(simulator, (byte) 1)), "ab0949a08c5af7c49b8212f417e2f15ab3f5c33dcf153821a8139f877a5b7be40100000000feffffff");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 0)), "603bea0b000000001976a914768a40bbd740cbe81d988e71de2a4d5c71396b1d88ac");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 1)), "8e240000000000001976a9146f4620b553fa095e721b9ee0efe9fa039cca459788ac");
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction4);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 2;
+        assert download.downloadNumOfOut(manager) == 2;
+        assertEquals(download.bytesToHex(download.downloadInput(manager, (byte) 0)), "ab0949a08c5af7c49b8212f417e2f15ab3f5c33dcf153821a8139f877a5b7be40000000000feffffff");
+        assertEquals(download.bytesToHex(download.downloadInput(manager, (byte) 1)), "ab0949a08c5af7c49b8212f417e2f15ab3f5c33dcf153821a8139f877a5b7be40100000000feffffff");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 0)), "603bea0b000000001976a914768a40bbd740cbe81d988e71de2a4d5c71396b1d88ac");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 1)), "8e240000000000001976a9146f4620b553fa095e721b9ee0efe9fa039cca459788ac");
         System.out.print("Test transaction4: passed" + System.lineSeparator());
     }
 
     @Test
     public void transaction5() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction5);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 1;
-        assert download.downloadNumOfOut(simulator) == 1;
-        assertEquals(ac.bytesToHex(download.downloadInput(simulator, (byte) 0)), "279a2323a5dfb51fc45f220fa58b0fc13e1e3342792a85d7e36cd6333b5cbc390000000000ffffffff");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 0)), "a05aea0b000000001976a914ffe9c0061097cc3b636f2cb0460fa4fc427d2b4588ac");
-        download.downloadSize(simulator);
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction5);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 1;
+        assert download.downloadNumOfOut(manager) == 1;
+        assertEquals(download.bytesToHex(download.downloadInput(manager, (byte) 0)), "279a2323a5dfb51fc45f220fa58b0fc13e1e3342792a85d7e36cd6333b5cbc390000000000ffffffff");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 0)), "a05aea0b000000001976a914ffe9c0061097cc3b636f2cb0460fa4fc427d2b4588ac");
+        download.downloadSize(manager);
         System.out.print("Test transaction5: passed" + System.lineSeparator());
     }
 
     @Test
     public void transaction6() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction6);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 1;
-        assert download.downloadNumOfOut(simulator) == 1;
-        //assertEquals(ac.bytesToHex(download.downloadInputV0(simulator, (byte) 0)), ""); //sparrow does not open this transaction
-        //assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 0)), ""); //sparrow does not open this transaction
-        download.downloadSize(simulator);
-        download.downloadInput(simulator, (byte) 0);
-        download.downloadOutput(simulator, (byte) 0);
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction6);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 1;
+        assert download.downloadNumOfOut(manager) == 1;
+        //assertEquals(download.bytesToHex(download.downloadInputV0(manager, (byte) 0)), ""); //sparrow does not open this transaction
+        //assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 0)), ""); //sparrow does not open this transaction
+        download.downloadSize(manager);
+        download.downloadInput(manager, (byte) 0);
+        download.downloadOutput(manager, (byte) 0);
         System.out.print("Test transaction6: passed" + System.lineSeparator());
     }
 
     @Test
     public void transaction7() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction7);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 1;
-        assert download.downloadNumOfOut(simulator) == 1;
-        assertEquals(ac.bytesToHex(download.downloadInput(simulator, (byte) 0)), "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000ffffffff");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 0)), "0000000000000000036a0100");
-        download.downloadSize(simulator);
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction7);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 1;
+        assert download.downloadNumOfOut(manager) == 1;
+        assertEquals(download.bytesToHex(download.downloadInput(manager, (byte) 0)), "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000ffffffff");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 0)), "0000000000000000036a0100");
+        download.downloadSize(manager);
         System.out.print("Test transaction7: passed" + System.lineSeparator());
     }
 
     @Test
     public void transaction8() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction8);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 2;
-        assert download.downloadNumOfOut(simulator) == 2;
-        assertEquals(ac.bytesToHex(download.downloadInput(simulator, (byte) 0)), "710ea76ab45c5cb6438e607e59cc037626981805ae9e0dfd9089012abb0be5350100000000ffffffff");
-        assertEquals(ac.bytesToHex(download.downloadInput(simulator, (byte) 1)), "190994d6a8b3c8c82ccbcfb2fba4106aa06639b872a8d447465c0d42588d6d670000000000ffffffff");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 0)), "00e1f505000000001976a914b6bc2c0ee5655a843d79afedd0ccc3f7dd64340988ac");
-        assertEquals(ac.bytesToHex(download.downloadOutput(simulator, (byte) 1)), "605af405000000001600141188ef8e4ce0449eaac8fb141cbf5a1176e6a088");
-        download.downloadSize(simulator);
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction8);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 2;
+        assert download.downloadNumOfOut(manager) == 2;
+        assertEquals(download.bytesToHex(download.downloadInput(manager, (byte) 0)), "710ea76ab45c5cb6438e607e59cc037626981805ae9e0dfd9089012abb0be5350100000000ffffffff");
+        assertEquals(download.bytesToHex(download.downloadInput(manager, (byte) 1)), "190994d6a8b3c8c82ccbcfb2fba4106aa06639b872a8d447465c0d42588d6d670000000000ffffffff");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 0)), "00e1f505000000001976a914b6bc2c0ee5655a843d79afedd0ccc3f7dd64340988ac");
+        assertEquals(download.bytesToHex(download.downloadOutput(manager, (byte) 1)), "605af405000000001600141188ef8e4ce0449eaac8fb141cbf5a1176e6a088");
+        download.downloadSize(manager);
         System.out.print("Test transaction8: passed" + System.lineSeparator());
     }
 
     @Test
     public void transaction9() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction9);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 0;
-        assert download.downloadNumOfOut(simulator) == 0;
-        download.downloadSize(simulator);
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction9);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 0;
+        assert download.downloadNumOfOut(manager) == 0;
+        download.downloadSize(manager);
         System.out.print("Test transaction9: passed" + System.lineSeparator());
     }
 
     @Test
     public void transaction10() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction10);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 0;
-        assert download.downloadNumOfOut(simulator) == 2;
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 1)), ""); // sparrow refuses to open this transaction
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction10);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 0;
+        assert download.downloadNumOfOut(manager) == 2;
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 0)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 1)), ""); // sparrow refuses to open this transaction
         System.out.print("Test transaction10: passed" + System.lineSeparator());
     }
     @Test
     public void transaction11() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction11);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 1;
-        assert download.downloadNumOfOut(simulator) == 2;
-        // assertEquals(ac.bytesToHex(download.downloadInputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 1)), ""); // sparrow refuses to open this transaction
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction11);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 1;
+        assert download.downloadNumOfOut(manager) == 2;
+        // assertEquals(download.bytesToHex(download.downloadInputV0(manager, (byte) 0)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 0)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 1)), ""); // sparrow refuses to open this transaction
         System.out.print("Test transaction11: passed" + System.lineSeparator());
     }
 
     @Test
     public void transaction12() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction12);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 1;
-        assert download.downloadNumOfOut(simulator) == 2;
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction12);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 1;
+        assert download.downloadNumOfOut(manager) == 2;
 
-        // assertEquals(ac.bytesToHex(download.downloadInputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 1)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadInputV0(manager, (byte) 0)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 0)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 1)), ""); // sparrow refuses to open this transaction
     }
 
     @Test
     public void transaction13() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction13);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 1;
-        assert download.downloadNumOfOut(simulator) == 2;
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction13);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 1;
+        assert download.downloadNumOfOut(manager) == 2;
 
-        // assertEquals(ac.bytesToHex(download.downloadInputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 1)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadInputV0(manager, (byte) 0)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 0)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 1)), ""); // sparrow refuses to open this transaction
     }
 
     @Test
     public void transaction14() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction14);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 1;
-        assert download.downloadNumOfOut(simulator) == 2;
-        // assertEquals(ac.bytesToHex(download.downloadInputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 1)), ""); // sparrow refuses to open this transaction
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction14);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 1;
+        assert download.downloadNumOfOut(manager) == 2;
+        // assertEquals(download.bytesToHex(download.downloadInputV0(manager, (byte) 0)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 0)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 1)), ""); // sparrow refuses to open this transaction
     }
 
     @Test
     public void transaction15() throws Exception {
-        byte[] transaction = AppletControl.fromHex(TransactionsImported.validTransaction15);
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
         Download download = new Download();
-        ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == 1;
-        assert download.downloadNumOfOut(simulator) == 2;
-        // assertEquals(ac.bytesToHex(download.downloadInputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 0)), ""); // sparrow refuses to open this transaction
-        // assertEquals(ac.bytesToHex(download.downloadOutputV0(simulator, (byte) 1)), ""); // sparrow refuses to open this transaction
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = Download.fromHex(TransactionsImported.validTransaction15);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        assert download.downloadNumOfInp(manager) == 1;
+        assert download.downloadNumOfOut(manager) == 2;
+        // assertEquals(download.bytesToHex(download.downloadInputV0(manager, (byte) 0)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 0)), ""); // sparrow refuses to open this transaction
+        // assertEquals(download.bytesToHex(download.downloadOutputV0(manager, (byte) 1)), ""); // sparrow refuses to open this transaction
     }
     /**
-*/
     //@Test
     public void runAllTests() throws Exception {
         transactionTestTemplate((byte) 1, (byte) 2, AppletControl.fromHex(TransactionsImported.validTransaction1));
@@ -347,13 +345,13 @@ public class AppletTest extends BaseTest {
     }
 
 
-    static void transactionTestTemplate(byte expectedInput, byte expectedOutput, byte[] transaction) throws Exception {
-        CardSimulator simulator = new CardSimulator();
-        AppletControl ac = new AppletControl(simulator, transaction);
+    void transactionTestTemplate(byte expectedInput, byte expectedOutput, byte[] transaction) throws Exception {
+        CardManager manager = connect();
+        AppletControl ac = new AppletControl(manager, transaction);
         Download download = new Download();
         ac.UploadTransaction();
-        assert download.downloadNumOfInp(simulator) == expectedInput;
-        assert download.downloadNumOfOut(simulator) == expectedOutput;
+        assert download.downloadNumOfInp(manager) == expectedInput;
+        assert download.downloadNumOfOut(manager) == expectedOutput;
     }
     //@Test
     public void callMyTest() throws Exception {
@@ -377,9 +375,9 @@ public class AppletTest extends BaseTest {
         AC6stTransaction.AppletDebugV0();
         AC7stTransaction.AppletDebugV0();
         AC8stTransaction.AppletDebugV0();
-         */
         //AC9stTransaction.AppletDebugV0();
         AC10stTransaction.AppletDebug();
 
     }
+    */
 }

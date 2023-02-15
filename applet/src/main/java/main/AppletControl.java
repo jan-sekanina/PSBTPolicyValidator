@@ -9,10 +9,12 @@ import javacard.framework.AID;
 
 public class AppletControl {
     CardSimulator simulator = null;
-    CardManager manager = null;
+    CardManager manager = new CardManager();
     Upload mu = new Upload();
     Download md = new Download();
     byte[] psbt = null;
+
+
 
     public void UploadData(CardSimulator simulator, Upload mu) throws Exception {
         mu.sendData(psbt, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, simulator);
@@ -64,6 +66,10 @@ public class AppletControl {
         simulator.installApplet(appletAID, MainApplet.class);
         simulator.selectApplet(appletAID);
         this.psbt = fromHex(psbt);
+    }
+
+    public AppletControl(CardManager man, byte[] psbt) throws Exception {
+        this.psbt = psbt;
     }
 
     public AppletControl(CardSimulator sim, byte[] psbt) throws Exception {

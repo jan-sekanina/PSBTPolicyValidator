@@ -2,7 +2,6 @@ package main;
 
 import com.licel.jcardsim.smartcardio.CardSimulator;
 
-
 public class Run {
     public static void main(String[] args) throws Exception {
         // ./gradlew run --args="arg1 arg2 arg3"
