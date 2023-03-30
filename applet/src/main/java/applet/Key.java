@@ -21,4 +21,11 @@ public class Key {
         return (short) (key_len_bytes + key_len);
     }
 
+    public void reset() {
+        start = -1;
+        key_len = -1;
+        key_len_bytes = 1;
+        key_type = -1;
+    }
+
 }

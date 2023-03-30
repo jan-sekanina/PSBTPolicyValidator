@@ -22,4 +22,10 @@ public class Value {
     public byte getByte(short index) {
         return PSBTdata[(short) (start + value_len_bytes + index)];
     }
+
+    public void reset() {
+        start = -1;
+        value_len = -1;
+        value_len_bytes = 1;
+    }
 }

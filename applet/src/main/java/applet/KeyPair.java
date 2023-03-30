@@ -16,4 +16,10 @@ public class KeyPair {
         // TODO: find an easy!! way to check overflow
 
     }
+
+    public void reset() {
+        key.reset();
+        value.reset();
+        start = -1;
+    }
 }

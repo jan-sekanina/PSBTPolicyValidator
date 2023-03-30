@@ -3,19 +3,29 @@ package applet;
 import javacard.framework.*;
 import javacard.security.RandomData;
 
+import java.util.Arrays;
+
 
 public class MainApplet extends Applet implements MultiSelectable {
     public static final short MAX_SIZE_OF_PSBT = 1024 * 6;
+    public static final short MAX_SIZE_OF_POLICY = 256;
+    public static final short STORAGE_AMOUNT = 16;
+    public static final short STORAGE_SIZE = 32;
     /**
      * class of all instructions and other hardcoded information
      */
 
     public PSBT psbt;
+    public static byte[][] additionalDataStorage;
+    public static short[] dataStorageOffsets;
+    public static byte[][] checkAgainstDataStorage;
+    public static short[] checkAgainstDataStorageOffsets;
     public static byte[] PSBTdata;
     public static byte[] controlArray;
     public static byte [] policy;
-    short offset;
-    short locked = 0; // 0 locked, 1 - opened
+    short transactionOffset;
+    short policyOffset;
+    short policyUploadLocked; // 0 locked, 1 - opened
 
     //private byte[] data = JCSystem.makeTransientByteArray((short) (1024 * 10),
     //		JCSystem.CLEAR_ON_DESELECT);
@@ -28,7 +38,12 @@ public class MainApplet extends Applet implements MultiSelectable {
 
     public MainApplet(byte[] buffer, short offset, byte length) {
         psbt = new PSBT();
+        additionalDataStorage = new byte[STORAGE_AMOUNT][STORAGE_SIZE];
+        dataStorageOffsets = new short[STORAGE_AMOUNT];
+        checkAgainstDataStorage = new byte[STORAGE_AMOUNT][STORAGE_SIZE];
+        checkAgainstDataStorageOffsets = new short[STORAGE_AMOUNT];
         PSBTdata = new byte[MAX_SIZE_OF_PSBT];  // to change PSBT max size change this constant
+        policy = new byte[MAX_SIZE_OF_POLICY];
         controlArray = new byte[AppletInstructions.PACKET_BUFFER_SIZE]; // array that is sent back to computer as confirmation
         controlArray[0] = 0;
         controlArray[1] = 1;
@@ -38,7 +53,9 @@ public class MainApplet extends Applet implements MultiSelectable {
         controlArray[5] = 5;
         controlArray[6] = 6;
         controlArray[7] = 7;
-        this.offset = 0;
+        this.transactionOffset = 0;
+        this.policyOffset = 0;
+        this.policyUploadLocked = 0;
 
         random = RandomData.getInstance(RandomData.ALG_SECURE_RANDOM);
 
@@ -60,16 +77,19 @@ public class MainApplet extends Applet implements MultiSelectable {
         if (cla == AppletInstructions.CLASS_PSBT_UPLOAD) {
             if (ins == AppletInstructions.INS_REQUEST) {
                 // TODO: return array size
+                transactionOffset = 0;
+                psbt.reset(); // maybe arbitrary
             }
             if (ins == AppletInstructions.INS_UPLOAD) {
 
-                Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, PSBTdata, offset, (short) (lc & 0xff));
-                offset += (short) (lc & 0xff);
+                Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, PSBTdata, transactionOffset, (short) (lc & 0xff));
+                transactionOffset += (short) (lc & 0xff);
             }
 
             if (ins == AppletInstructions.INS_FINISH) {
 
                 try {
+                    psbt.reset();
                     psbt.fill();
                 } catch (Exception e) {
                     //DO NOTHING
@@ -81,33 +101,49 @@ public class MainApplet extends Applet implements MultiSelectable {
         /**
          * this uploads Policy represented as array of bytes
          */
-        if (cla == AppletInstructions.CLASS_POLICY_UPLOAD) {
+        if (cla == AppletInstructions.CLASS_POLICY_UPLOAD && policyUploadLocked == 0) {
             if (ins == AppletInstructions.INS_REQUEST) {
-                //do smth here
             }
             if (ins == AppletInstructions.INS_UPLOAD) {
-                //do smth here
+                Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, policy, policyOffset, (short) (lc & 0xff));
+                policyOffset += (short) (lc & 0xff);
             }
             if (ins == AppletInstructions.INS_FINISH) {
-                //do smth here
+                policyUploadLocked = 1;
             }
         }
         /**
          * this uploads data(secrets and time signed by authority) for Policy
          */
-        if (cla == AppletInstructions.CLASS_SECRETandTIME_UPLOAD) {
+        if (cla == AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD && policyUploadLocked == 0) {
             if (ins == AppletInstructions.INS_REQUEST) {
-                //do smth here
+                dataStorageOffsets[p1] = 0;
             }
             if (ins == AppletInstructions.INS_UPLOAD) {
-                //do smth here
+                Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, additionalDataStorage[p1], dataStorageOffsets[p1], (short) (lc & 0xff));
+                System.out.print("SHit coppiedd" + System.lineSeparator());
+                System.out.print("SHit coppiedd: "+ Arrays.toString(additionalDataStorage[p1]) + System.lineSeparator());
+                dataStorageOffsets[p1] += (short) (lc & 0xff);
             }
             if (ins == AppletInstructions.INS_FINISH) {
-                //do smth here
             }
         }
 
-        if (cla == AppletInstructions.CLASS_DEBUG_DOWNLOAD && ins == AppletInstructions.INS_DOWNLOAD_ARRAY) {
+        if (cla == AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD && policyUploadLocked == 1) {
+            if (ins == AppletInstructions.INS_REQUEST) {
+                checkAgainstDataStorageOffsets[p1] = 0;
+            }
+            if (ins == AppletInstructions.INS_UPLOAD) {
+                Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, checkAgainstDataStorage[p1], checkAgainstDataStorageOffsets[p1], (short) (lc & 0xff));
+                System.out.print("SH coppiedd" + System.lineSeparator());
+                System.out.print("SH coppiedd: "+ Arrays.toString(checkAgainstDataStorage[p1]) + System.lineSeparator());
+                checkAgainstDataStorageOffsets[p1] += (short) (lc & 0xff);
+            }
+            if (ins == AppletInstructions.INS_FINISH) {
+            }
+        }
+
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_PSBT_ARRAY && ins == AppletInstructions.INS_DOWNLOAD_ARRAY) {
             short from = (short) ((apduBuffer[ISO7816.OFFSET_CDATA] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 1] & 0xff));
             short to = (short) ((apduBuffer[ISO7816.OFFSET_CDATA + 2] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 3] & 0xff));
             if (from < 0 || to > PSBTdata.length) {
@@ -146,13 +182,27 @@ public class MainApplet extends Applet implements MultiSelectable {
             }
         }
 
-        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_OUTPUT_V0){
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_OUTPUT_V0) {
             if (GlobalMap.PSBTversion == 0) {
                 FromApplet.send_data(apdu, psbt.global_map.globalUnsignedTX.output_count);
             }
             if (GlobalMap.PSBTversion == 2) {
                 FromApplet.send_data(apdu, PSBT.current_output_map);
             }
+        }
+
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_POLICY_SIZE && ins == AppletInstructions.INS_REQUEST) {
+            FromApplet.send_data(apdu, policyOffset);
+        }
+
+        if (cla == AppletInstructions.CLASS_DOWNLOAD_POLICY) {
+            short from = (short) ((apduBuffer[ISO7816.OFFSET_CDATA] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 1] & 0xff));
+            short to = (short) ((apduBuffer[ISO7816.OFFSET_CDATA + 2] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 3] & 0xff));
+            FromApplet.send_data(apdu, policy, from, to);
+        }
+
+        if (cla == AppletInstructions.CLASS_VALIDATE_POLICY) {
+            FromApplet.send_data(apdu, validatePolicy());
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_INPUT){
@@ -195,6 +245,48 @@ public class MainApplet extends Applet implements MultiSelectable {
             Util.arrayCopyNonAtomic(HAND_SHAKE, (short) 0, apduBuffer, (short) 0, (short) HAND_SHAKE.length);
             apdu.setOutgoingAndSend((short) 0, (short) HAND_SHAKE.length);
         }
+    }
+
+    short validatePolicy(){
+        short stepCounter = 0;
+        short orSection = 0;
+        if (policyOffset == 0) { //  empty policy is valid policy
+            return 1;
+        }
+        while (stepCounter < policyOffset) {
+            System.out.print("policy[stepcounter]: " + policy[stepCounter] + System.lineSeparator());
+            switch (policy[stepCounter]) {
+                case PolicyInstruction.checkSecret:
+                    if (equals(additionalDataStorage[policy[stepCounter + 1]], checkAgainstDataStorage[policy[stepCounter + 1]])) {
+                        orSection = 1;
+                    }
+                    stepCounter += 2;
+                    break;
+                case PolicyInstruction.policyAnd:
+                    if (orSection == 0) {
+                        return 0;
+                    }
+                    orSection = 0;
+                    stepCounter++;
+                    break;
+                default:
+                    return 0; //  unknown instruction
+            }
+        }
+        System.out.print("policy[stepcounter]: " + policy[stepCounter] + System.lineSeparator());
+        System.out.print("validating 1" + System.lineSeparator());
+        return orSection;
+    }
+
+    private boolean equals(byte[] bytes, byte[] bytes2) { // checks two byte[] with size of STORAGE_SIZE
+        short j = 0;
+        while (j < STORAGE_SIZE) {
+            if (bytes[j] != bytes2[j]) {
+                    return false;
+            }
+            j++;
+        }
+        return true;
     }
 
     public boolean select(boolean b) {

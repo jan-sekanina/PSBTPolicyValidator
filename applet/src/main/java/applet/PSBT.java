@@ -56,4 +56,9 @@ public class PSBT {
         }
 
     }
+
+    public void reset() {
+
+        byte_size = 0;
+    }
 }

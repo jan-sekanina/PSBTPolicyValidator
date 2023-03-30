@@ -16,6 +16,7 @@ package applet;
 public class AppletInstructions {
 
 
+
     public AppletInstructions() {
     }
 
@@ -37,8 +38,11 @@ public class AppletInstructions {
     public static final short CLASS_POLICY_UPLOAD = 1;
     // simple scenario where applet returns "HAND SHAKE" in bytes
     public static final short CLASS_HAND_SHAKE = 3;
-    public static final short CLASS_SECRETandTIME_UPLOAD = 2; // p1 will determine reference, where to store it
-    public static final short CLASS_DEBUG_DOWNLOAD = 4;
+    public static final short CLASS_ADDITIONAL_DATA_UPLOAD = 2; // p1 will determine reference, where to store it
+    public static final short CLASS_DOWNLOAD_PSBT_ARRAY = 4;
+
+    public static final short CLASS_SET_MODE_SECRET = 14;
+    public static final short CLASS_SET_MODE_TIME = 15;
 
     /**
      * Below are debug classes
@@ -57,6 +61,9 @@ public class AppletInstructions {
     public static final short CLASS_DOWNLOAD_INPUT_ALL = 9;
     public static final short CLASS_DOWNLOAD_OUTPUT_ALL = 10;
     public static final short CLASS_DOWNLOAD_GLOBAL_MAP_KEYPAIR = 11;
+    public static final short CLASS_DOWNLOAD_POLICY_SIZE = 14;
+    public static final short CLASS_DOWNLOAD_POLICY = 15;
+    public static final short CLASS_VALIDATE_POLICY = 16;
 
 
     public static final short CLASS_PSBT_UPLOAD_AND_BACK = 4;

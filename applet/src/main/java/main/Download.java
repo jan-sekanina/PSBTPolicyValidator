@@ -85,7 +85,7 @@ public class Download {
             communicationArray[1] = (byte) (from + offset);
             communicationArray[2] = (byte) ((from + offset + AppletInstructions.PACKET_BUFFER_SIZE) >> 8);
             communicationArray[3] = (byte) (from + offset + AppletInstructions.PACKET_BUFFER_SIZE);
-            cmd = new CommandAPDU(AppletInstructions.CLASS_DEBUG_DOWNLOAD, AppletInstructions.INS_DOWNLOAD_ARRAY, 0, 0, communicationArray, communicationArray.length);
+            cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_PSBT_ARRAY, AppletInstructions.INS_DOWNLOAD_ARRAY, 0, 0, communicationArray, communicationArray.length);
             rsp = simulator.transmitCommand(cmd);
             assert rsp.getSW() == 0x9000;
             System.arraycopy(rsp.getData(), (short) 0, res, offset, AppletInstructions.PACKET_BUFFER_SIZE);
@@ -97,7 +97,7 @@ public class Download {
             communicationArray[1] = (byte) (from + offset);
             communicationArray[2] = (byte) (to >> 8);
             communicationArray[3] = (byte) to;
-            cmd = new CommandAPDU(AppletInstructions.CLASS_DEBUG_DOWNLOAD, AppletInstructions.INS_DOWNLOAD_ARRAY, 0, 0, communicationArray, communicationArray.length);
+            cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_PSBT_ARRAY, AppletInstructions.INS_DOWNLOAD_ARRAY, 0, 0, communicationArray, communicationArray.length);
             rsp = simulator.transmitCommand(cmd);
             assert rsp.getSW() == 0x9000;
             System.arraycopy(rsp.getData(), (short) 0, res,  offset, to - (offset + from));

@@ -26,4 +26,15 @@ public class GeneralMap {
             map_size += key_pairs[current_key_pair].getSize();
         }
     }
+
+    public void reset() {
+        short i = 0;
+        while (i < NUM_OF_KEYPAIR) {
+            key_pairs[i].reset();
+            i++;
+        }
+        map_start = -1;
+        current_key_pair = -1;
+        map_size = 0;
+    }
 }
