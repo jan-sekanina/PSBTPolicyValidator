@@ -3,8 +3,6 @@ package applet;
 import javacard.framework.*;
 import javacard.security.RandomData;
 
-import java.util.Arrays;
-
 
 public class MainApplet extends Applet implements MultiSelectable {
     public static final short MAX_SIZE_OF_PSBT = 1024 * 6;
@@ -44,7 +42,7 @@ public class MainApplet extends Applet implements MultiSelectable {
         checkAgainstDataStorageOffsets = new short[STORAGE_AMOUNT];
         PSBTdata = new byte[MAX_SIZE_OF_PSBT];  // to change PSBT max size change this constant
         policy = new byte[MAX_SIZE_OF_POLICY];
-        controlArray = new byte[AppletInstructions.PACKET_BUFFER_SIZE]; // array that is sent back to computer as confirmation
+        controlArray = new byte[AppletInstructions.PACKET_BUFFER_SIZE]; // historical array that is sent back to computer as confirmation
         controlArray[0] = 0;
         controlArray[1] = 1;
         controlArray[2] = 2;
@@ -110,10 +108,11 @@ public class MainApplet extends Applet implements MultiSelectable {
             }
             if (ins == AppletInstructions.INS_FINISH) {
                 policyUploadLocked = 1;
+                checkStorageUsage();
             }
         }
         /**
-         * this uploads data(secrets and time signed by authority) for Policy
+         * this uploads additional data for Policy evaluation
          */
         if (cla == AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD && policyUploadLocked == 0) {
             if (ins == AppletInstructions.INS_REQUEST) {
@@ -121,22 +120,18 @@ public class MainApplet extends Applet implements MultiSelectable {
             }
             if (ins == AppletInstructions.INS_UPLOAD) {
                 Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, additionalDataStorage[p1], dataStorageOffsets[p1], (short) (lc & 0xff));
-                System.out.print("SHit coppiedd" + System.lineSeparator());
-                System.out.print("SHit coppiedd: "+ Arrays.toString(additionalDataStorage[p1]) + System.lineSeparator());
                 dataStorageOffsets[p1] += (short) (lc & 0xff);
             }
             if (ins == AppletInstructions.INS_FINISH) {
             }
         }
 
-        if (cla == AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD && policyUploadLocked == 1) {
+        if (cla == AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD && policyUploadLocked == 1) { // Different Class for DATA upload after policy is locked
             if (ins == AppletInstructions.INS_REQUEST) {
                 checkAgainstDataStorageOffsets[p1] = 0;
             }
             if (ins == AppletInstructions.INS_UPLOAD) {
                 Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, checkAgainstDataStorage[p1], checkAgainstDataStorageOffsets[p1], (short) (lc & 0xff));
-                System.out.print("SH coppiedd" + System.lineSeparator());
-                System.out.print("SH coppiedd: "+ Arrays.toString(checkAgainstDataStorage[p1]) + System.lineSeparator());
                 checkAgainstDataStorageOffsets[p1] += (short) (lc & 0xff);
             }
             if (ins == AppletInstructions.INS_FINISH) {
@@ -253,40 +248,218 @@ public class MainApplet extends Applet implements MultiSelectable {
         if (policyOffset == 0) { //  empty policy is valid policy
             return 1;
         }
+
         while (stepCounter < policyOffset) {
             System.out.print("policy[stepcounter]: " + policy[stepCounter] + System.lineSeparator());
+            System.out.print("orSection: " + orSection + System.lineSeparator());
             switch (policy[stepCounter]) {
+                case PolicyInstruction.minTotalOutput:
+                case PolicyInstruction.maxTotalOutput:
+                case PolicyInstruction.minOutputToTargetAddress:
+                case PolicyInstruction.maxOutputToTargetAddress:
+                case PolicyInstruction.minAmountofInputs:
+                    if (GlobalMap.PSBTversion == 0) {
+                        if (policy[stepCounter + 1] <= psbt.global_map.globalUnsignedTX.input_count) {
+                            orSection = 1;
+                        }
+                    }
+
+                    if (GlobalMap.PSBTversion == 2) {
+                        if (policy[stepCounter + 1] <= psbt.global_map.input_maps_total) {
+                            orSection = 1;
+                        }
+                    }
+                    stepCounter += 2;
+                    break;
+
+                case PolicyInstruction.maxAmountofInputs:
+                    if (GlobalMap.PSBTversion == 0) {
+                        if (policy[stepCounter + 1] >= psbt.global_map.globalUnsignedTX.input_count) {
+                            orSection = 1;
+                        }
+                    }
+
+                    if (GlobalMap.PSBTversion == 2) {
+                        if (policy[stepCounter + 1] >= psbt.global_map.input_maps_total) {
+                            orSection = 1;
+                        }
+                    }
+                    stepCounter += 2;
+                    break;
+
+                case PolicyInstruction.minAmountofOutputs:
+                    if (GlobalMap.PSBTversion == 0) {
+                        if (policy[stepCounter + 1] <= psbt.global_map.globalUnsignedTX.output_count) {
+                            orSection = 1;
+                        }
+                    }
+
+                    if (GlobalMap.PSBTversion == 2) {
+                        if (policy[stepCounter + 1] <= psbt.global_map.output_maps_total) {
+                            orSection = 1;
+                        }
+                    }
+                    stepCounter += 2;
+                    break;
+
+                case PolicyInstruction.maxAmountofOutputs:
+                    if (GlobalMap.PSBTversion == 0) {
+                        if (policy[stepCounter + 1] >= psbt.global_map.globalUnsignedTX.output_count) {
+                            orSection = 1;
+                        }
+                    }
+
+                    if (GlobalMap.PSBTversion == 2) {
+                        if (policy[stepCounter + 1] >= psbt.global_map.output_maps_total) {
+                            orSection = 1;
+                        }
+                    }
+                    stepCounter += 2;
+                    break;
+
+                case PolicyInstruction.naiveTimeLapsed:  // TODO delete
+                case PolicyInstruction.signedTmeLapse:
                 case PolicyInstruction.checkSecret:
-                    if (equals(additionalDataStorage[policy[stepCounter + 1]], checkAgainstDataStorage[policy[stepCounter + 1]])) {
+                    if ((Util.arrayCompare(additionalDataStorage[policy[stepCounter + 1]],(short) 0,checkAgainstDataStorage[policy[stepCounter + 1]],(short) 0, STORAGE_SIZE)) == 0) {
                         orSection = 1;
                     }
                     stepCounter += 2;
                     break;
+
+                case PolicyInstruction.transactionVersion:
+                    if (policy[stepCounter + 1] == GlobalMap.PSBTversion) {
+                        orSection = 1;
+                    }
+                    stepCounter += 2;
+                    break;
+
                 case PolicyInstruction.policyAnd:
                     if (orSection == 0) {
-                        return 0;
+                        return validationReturnProcedure((short) 0);
                     }
                     orSection = 0;
                     stepCounter++;
                     break;
+
                 default:
-                    return 0; //  unknown instruction
+                    return validationReturnProcedure((short) 0); //  unknown instruction
             }
         }
         System.out.print("policy[stepcounter]: " + policy[stepCounter] + System.lineSeparator());
-        System.out.print("validating 1" + System.lineSeparator());
-        return orSection;
+        System.out.print("orSection: " + orSection + System.lineSeparator());
+        return validationReturnProcedure(orSection);
     }
 
-    private boolean equals(byte[] bytes, byte[] bytes2) { // checks two byte[] with size of STORAGE_SIZE
-        short j = 0;
-        while (j < STORAGE_SIZE) {
-            if (bytes[j] != bytes2[j]) {
-                    return false;
+    boolean checkStorageUsage() {
+        short stepCounter = 0;
+        while (stepCounter < policyOffset) {
+            System.out.print("policy[stepcounter]: " + policy[stepCounter] + System.lineSeparator());
+            switch (policy[stepCounter]) {
+                case PolicyInstruction.minTotalOutput:
+                    if (dataStorageOffsets[policy[stepCounter + 1]] == 0){
+                        System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
+                        System.out.println("with PolicyInstruction: " + policy[stepCounter]);
+                        return false;
+                    }
+                    stepCounter += 2;
+                    break;
+
+                case PolicyInstruction.maxTotalOutput:
+                    if (dataStorageOffsets[policy[stepCounter + 1]] == 0){
+                        System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
+                        System.out.println("with PolicyInstruction: " + policy[stepCounter]);
+                        return false;
+                    }
+                    stepCounter += 2;
+                    break;
+
+                case PolicyInstruction.minOutputToTargetAddress:
+                    if (dataStorageOffsets[policy[stepCounter + 1]] == 0 || dataStorageOffsets[policy[stepCounter + 2]] == 0){
+                        System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
+                        System.out.println("with PolicyInstruction: " + policy[stepCounter]);
+                        return false;
+                    }
+                    stepCounter += 3;
+                    break;
+
+                case PolicyInstruction.maxOutputToTargetAddress:
+                    if (dataStorageOffsets[policy[stepCounter + 1]] == 0 || dataStorageOffsets[policy[stepCounter + 2]] == 0){
+                        System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
+                        System.out.println("with PolicyInstruction: " + policy[stepCounter]);
+                        return false;
+                    }
+                    stepCounter += 3;
+                    break;
+
+                case PolicyInstruction.minAmountofInputs:
+                    stepCounter += 2;
+                    break;
+                case PolicyInstruction.maxAmountofInputs:
+                    stepCounter += 2;
+                    break;
+                case PolicyInstruction.minAmountofOutputs:
+                    stepCounter += 2;
+                    break;
+                case PolicyInstruction.maxAmountofOutputs:
+                    stepCounter += 2;
+                    break;
+
+                case PolicyInstruction.naiveTimeLapsed:
+                    if (dataStorageOffsets[policy[stepCounter + 1]] == 0){
+                        System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
+                        System.out.println("with PolicyInstruction: " + policy[stepCounter]);
+                        return false;
+                    }
+                    stepCounter += 2;
+                    break;
+
+                case PolicyInstruction.signedTmeLapse:
+                    if (dataStorageOffsets[policy[stepCounter + 1]] == 0 || dataStorageOffsets[policy[stepCounter + 2]] == 0) {
+                        System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
+                        System.out.println("with PolicyInstruction: " + policy[stepCounter]);
+                        return false;
+                    }
+                    stepCounter += 3;
+                    break;
+
+                case PolicyInstruction.checkSecret:
+                    if (dataStorageOffsets[policy[stepCounter + 1]] == 0) {
+                        System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
+                        System.out.println("with PolicyInstruction: " + policy[stepCounter]);
+                        return false;
+                    }
+                    stepCounter += 2;
+                    break;
+
+                case PolicyInstruction.transactionVersion:
+                    stepCounter += 2;
+                    break;
+
+                case PolicyInstruction.policyAnd:
+                    stepCounter++;
+                    break;
+                default:
             }
-            j++;
         }
+        System.out.print("policy[stepcounter]: " + policy[stepCounter] + System.lineSeparator());
         return true;
+
+    }
+
+    private short validationReturnProcedure(short returnCode) {
+        // clears all temporary storages accessible after policy is locked
+        short i = 0;
+        short j = 0;
+        while (i < STORAGE_AMOUNT) {
+            while (j < STORAGE_SIZE) {
+                checkAgainstDataStorage[i][j] = (byte) 0; // deletes content
+                j++;
+            }
+            checkAgainstDataStorageOffsets[i] = 0; // deletes size
+            j = 0;
+            i++;
+        }
+        return returnCode;
     }
 
     public boolean select(boolean b) {
