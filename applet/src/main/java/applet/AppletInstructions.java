@@ -86,4 +86,9 @@ public class AppletInstructions {
     public static final byte PSBT_GLOBAL_SIGHASH_SINGLE_INPUTS = 0x07;
     public static final byte PSBT_GLOBAL_VERSION = (byte) 0xFB;
     public static final byte PSBT_GLOBAL_PROPRIETARY = (byte) 0xFC;
+
+
+    public static final byte PSBT_OUT_AMOUNT = (byte) 0x03;
+    public static final byte PSBT_OUT_SCRIPT = (byte) 0x04;
+
 }

@@ -1,6 +1,9 @@
 package applet;
 
+import java.util.Arrays;
+
 import static applet.MainApplet.PSBTdata;
+import static applet.MainApplet.totalOutput;
 
 public class PSBT {
     public static final short MAX_OF_IO_MAPS = 8;
@@ -54,11 +57,26 @@ public class PSBT {
             byte_size++;
             current_output_map++;
         }
-
+        Tools.getTotalOutput();
     }
 
     public void reset() {
+        short i = 0;
+        global_map.reset();
+        while (i < MAX_OF_IO_MAPS) {
+            input_maps[i].reset();
+            output_maps[i].reset();
+            i++;
+        }
 
+        i = 0;
+        while (i < 8) {
+            MainApplet.totalOutput[i] = 0;
+            i++;
+        }
+
+        current_input_map = 0;
+        current_output_map = 0;
         byte_size = 0;
     }
 }

@@ -6,7 +6,7 @@ public class Key {
     public short start = -1;
     public short key_len = -1;
     public short key_len_bytes = 1;
-    public short key_type = -1;
+    public short key_type = -1; // in bips there is difference
 
     public void fill(short arrayIndex) {
         start = arrayIndex;

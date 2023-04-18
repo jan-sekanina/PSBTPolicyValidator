@@ -37,4 +37,19 @@ public class GlobalMap extends GeneralMap {
             map_size += key_pairs[current_key_pair].getSize();
         }
     }
+
+        public void reset() {
+            short i = 0;
+            while (i < NUM_OF_KEYPAIR) {
+                key_pairs[i].reset();
+                i++;
+            }
+            input_maps_total = -1;
+            output_maps_total = -1;
+            PSBTversion = 0;
+            globalUnsignedTX.reset();
+            map_start = -1;
+            current_key_pair = -1;
+            map_size = 0;
+    }
 }

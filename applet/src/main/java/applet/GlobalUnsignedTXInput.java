@@ -19,4 +19,13 @@ public class GlobalUnsignedTXInput {
         sequence_start = (short) (script_sig_start + script_size);
         size = (short) (36 + byteSizeOfCWI(script_size) + script_size + 4); // easier to read and understand this way
     }
+
+    void reset(){
+        previous_output_start = -1;
+        script_size_start = -1;
+        script_size = -1;
+        script_sig_start = -1;
+        sequence_start = -1;
+        size = 0;
+    }
 }

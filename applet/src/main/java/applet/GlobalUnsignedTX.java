@@ -64,4 +64,16 @@ public class GlobalUnsignedTX {
         short signature_scrip_size = compactWeirdoInt((short) (bytesIgnored + 36));
         return (short) (signature_scrip_size + 40 + byteSizeOfCWI(signature_scrip_size));
     }
+
+    void reset() {
+        short i = 0;
+        while (i < MAX_COUNT_OF_IO) {
+            inputs[i].reset();
+            outputs[i].reset();
+            i++;
+        }
+        start = -1;
+        version = -1;
+        size = 0;
+    }
 }

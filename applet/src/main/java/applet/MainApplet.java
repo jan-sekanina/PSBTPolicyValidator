@@ -13,17 +13,18 @@ public class MainApplet extends Applet implements MultiSelectable {
      * class of all instructions and other hardcoded information
      */
 
-    public PSBT psbt;
+    public static PSBT psbt;
     public static byte[][] additionalDataStorage;
     public static short[] dataStorageOffsets;
     public static byte[][] checkAgainstDataStorage;
     public static short[] checkAgainstDataStorageOffsets;
     public static byte[] PSBTdata;
     public static byte[] controlArray;
-    public static byte [] policy;
-    short transactionOffset;
-    short policyOffset;
-    short policyUploadLocked; // 0 locked, 1 - opened
+    public static byte[] policy;
+    public static byte[] totalOutput;
+    static short transactionOffset;
+    static short policyOffset;
+    static short policyUploadLocked; // 0 locked, 1 - opened
 
     //private byte[] data = JCSystem.makeTransientByteArray((short) (1024 * 10),
     //		JCSystem.CLEAR_ON_DESELECT);
@@ -43,6 +44,7 @@ public class MainApplet extends Applet implements MultiSelectable {
         PSBTdata = new byte[MAX_SIZE_OF_PSBT];  // to change PSBT max size change this constant
         policy = new byte[MAX_SIZE_OF_POLICY];
         controlArray = new byte[AppletInstructions.PACKET_BUFFER_SIZE]; // historical array that is sent back to computer as confirmation
+        totalOutput = new byte[8];
         controlArray[0] = 0;
         controlArray[1] = 1;
         controlArray[2] = 2;
@@ -51,9 +53,9 @@ public class MainApplet extends Applet implements MultiSelectable {
         controlArray[5] = 5;
         controlArray[6] = 6;
         controlArray[7] = 7;
-        this.transactionOffset = 0;
-        this.policyOffset = 0;
-        this.policyUploadLocked = 0;
+        transactionOffset = 0;
+        policyOffset = 0;
+        policyUploadLocked = 0;
 
         random = RandomData.getInstance(RandomData.ALG_SECURE_RANDOM);
 
@@ -76,16 +78,13 @@ public class MainApplet extends Applet implements MultiSelectable {
             if (ins == AppletInstructions.INS_REQUEST) {
                 // TODO: return array size
                 transactionOffset = 0;
-                psbt.reset(); // maybe arbitrary
             }
             if (ins == AppletInstructions.INS_UPLOAD) {
-
                 Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, PSBTdata, transactionOffset, (short) (lc & 0xff));
                 transactionOffset += (short) (lc & 0xff);
             }
 
             if (ins == AppletInstructions.INS_FINISH) {
-
                 try {
                     psbt.reset();
                     psbt.fill();
@@ -253,11 +252,35 @@ public class MainApplet extends Applet implements MultiSelectable {
             System.out.print("policy[stepcounter]: " + policy[stepCounter] + System.lineSeparator());
             System.out.print("orSection: " + orSection + System.lineSeparator());
             switch (policy[stepCounter]) {
-                case PolicyInstruction.minTotalOutput:
-                case PolicyInstruction.maxTotalOutput:
-                case PolicyInstruction.minOutputToTargetAddress:
-                case PolicyInstruction.maxOutputToTargetAddress:
-                case PolicyInstruction.minAmountofInputs:
+                case Policy.minTotalOutput:
+                    if (Policy.validateTotalOutput(policy[stepCounter + 1], (short) 1)){
+                        orSection = 1;
+                    }
+                    stepCounter += 2;
+                    break;
+
+                case Policy.maxTotalOutput:
+                    if (Policy.validateTotalOutput(policy[stepCounter + 1], (short) -1)){
+                        orSection = 1;
+                    }
+                    stepCounter += 2;
+                    break;
+
+                case Policy.minOutputWithSigScr:
+                    if (Policy.validateValueOwSS((policy[stepCounter + 1]), (policy[stepCounter + 2]), (short) 1)) { //validate Value Output with Sign Script
+                        orSection = 1;
+                    }
+                    stepCounter += 3;
+                    break;
+
+                case Policy.maxOutputWithSigScr:
+                    if (Policy.validateValueOwSS((policy[stepCounter + 1]), (policy[stepCounter + 2]), (short) -1)) {
+                        orSection = 1;
+                    }
+                    stepCounter += 3;
+                    break;
+
+                case Policy.minNumberofInputs:
                     if (GlobalMap.PSBTversion == 0) {
                         if (policy[stepCounter + 1] <= psbt.global_map.globalUnsignedTX.input_count) {
                             orSection = 1;
@@ -272,7 +295,7 @@ public class MainApplet extends Applet implements MultiSelectable {
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.maxAmountofInputs:
+                case Policy.maxNumberofInputs:
                     if (GlobalMap.PSBTversion == 0) {
                         if (policy[stepCounter + 1] >= psbt.global_map.globalUnsignedTX.input_count) {
                             orSection = 1;
@@ -287,7 +310,7 @@ public class MainApplet extends Applet implements MultiSelectable {
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.minAmountofOutputs:
+                case Policy.minNumberofOutputs:
                     if (GlobalMap.PSBTversion == 0) {
                         if (policy[stepCounter + 1] <= psbt.global_map.globalUnsignedTX.output_count) {
                             orSection = 1;
@@ -302,7 +325,7 @@ public class MainApplet extends Applet implements MultiSelectable {
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.maxAmountofOutputs:
+                case Policy.maxNumberofOutputs:
                     if (GlobalMap.PSBTversion == 0) {
                         if (policy[stepCounter + 1] >= psbt.global_map.globalUnsignedTX.output_count) {
                             orSection = 1;
@@ -317,23 +340,24 @@ public class MainApplet extends Applet implements MultiSelectable {
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.naiveTimeLapsed:  // TODO delete
-                case PolicyInstruction.signedTmeLapse:
-                case PolicyInstruction.checkSecret:
+                case Policy.naiveTimeLapsed:  // TODO delete
+                case Policy.signedTmeLapse:
+                case Policy.checkSecret:
                     if ((Util.arrayCompare(additionalDataStorage[policy[stepCounter + 1]],(short) 0,checkAgainstDataStorage[policy[stepCounter + 1]],(short) 0, STORAGE_SIZE)) == 0) {
+                        //does this compare little or big endian
                         orSection = 1;
                     }
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.transactionVersion:
+                case Policy.transactionVersion:
                     if (policy[stepCounter + 1] == GlobalMap.PSBTversion) {
                         orSection = 1;
                     }
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.policyAnd:
+                case Policy.policyAnd:
                     if (orSection == 0) {
                         return validationReturnProcedure((short) 0);
                     }
@@ -355,7 +379,7 @@ public class MainApplet extends Applet implements MultiSelectable {
         while (stepCounter < policyOffset) {
             System.out.print("policy[stepcounter]: " + policy[stepCounter] + System.lineSeparator());
             switch (policy[stepCounter]) {
-                case PolicyInstruction.minTotalOutput:
+                case Policy.minTotalOutput:
                     if (dataStorageOffsets[policy[stepCounter + 1]] == 0){
                         System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
                         System.out.println("with PolicyInstruction: " + policy[stepCounter]);
@@ -364,7 +388,7 @@ public class MainApplet extends Applet implements MultiSelectable {
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.maxTotalOutput:
+                case Policy.maxTotalOutput:
                     if (dataStorageOffsets[policy[stepCounter + 1]] == 0){
                         System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
                         System.out.println("with PolicyInstruction: " + policy[stepCounter]);
@@ -373,7 +397,7 @@ public class MainApplet extends Applet implements MultiSelectable {
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.minOutputToTargetAddress:
+                case Policy.minOutputWithSigScr:
                     if (dataStorageOffsets[policy[stepCounter + 1]] == 0 || dataStorageOffsets[policy[stepCounter + 2]] == 0){
                         System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
                         System.out.println("with PolicyInstruction: " + policy[stepCounter]);
@@ -382,7 +406,7 @@ public class MainApplet extends Applet implements MultiSelectable {
                     stepCounter += 3;
                     break;
 
-                case PolicyInstruction.maxOutputToTargetAddress:
+                case Policy.maxOutputWithSigScr:
                     if (dataStorageOffsets[policy[stepCounter + 1]] == 0 || dataStorageOffsets[policy[stepCounter + 2]] == 0){
                         System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
                         System.out.println("with PolicyInstruction: " + policy[stepCounter]);
@@ -391,20 +415,20 @@ public class MainApplet extends Applet implements MultiSelectable {
                     stepCounter += 3;
                     break;
 
-                case PolicyInstruction.minAmountofInputs:
+                case Policy.minNumberofInputs:
                     stepCounter += 2;
                     break;
-                case PolicyInstruction.maxAmountofInputs:
+                case Policy.maxNumberofInputs:
                     stepCounter += 2;
                     break;
-                case PolicyInstruction.minAmountofOutputs:
+                case Policy.minNumberofOutputs:
                     stepCounter += 2;
                     break;
-                case PolicyInstruction.maxAmountofOutputs:
+                case Policy.maxNumberofOutputs:
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.naiveTimeLapsed:
+                case Policy.naiveTimeLapsed:
                     if (dataStorageOffsets[policy[stepCounter + 1]] == 0){
                         System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
                         System.out.println("with PolicyInstruction: " + policy[stepCounter]);
@@ -413,7 +437,7 @@ public class MainApplet extends Applet implements MultiSelectable {
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.signedTmeLapse:
+                case Policy.signedTmeLapse:
                     if (dataStorageOffsets[policy[stepCounter + 1]] == 0 || dataStorageOffsets[policy[stepCounter + 2]] == 0) {
                         System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
                         System.out.println("with PolicyInstruction: " + policy[stepCounter]);
@@ -422,7 +446,7 @@ public class MainApplet extends Applet implements MultiSelectable {
                     stepCounter += 3;
                     break;
 
-                case PolicyInstruction.checkSecret:
+                case Policy.checkSecret:
                     if (dataStorageOffsets[policy[stepCounter + 1]] == 0) {
                         System.out.println("seems like unused storage in memory with pointer: " + policy[stepCounter + 1]);
                         System.out.println("with PolicyInstruction: " + policy[stepCounter]);
@@ -431,11 +455,11 @@ public class MainApplet extends Applet implements MultiSelectable {
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.transactionVersion:
+                case Policy.transactionVersion:
                     stepCounter += 2;
                     break;
 
-                case PolicyInstruction.policyAnd:
+                case Policy.policyAnd:
                     stepCounter++;
                     break;
                 default:

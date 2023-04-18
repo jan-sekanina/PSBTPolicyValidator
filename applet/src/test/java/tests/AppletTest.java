@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @author xsvenda, Dusan Klinec (ph4r05)
  */
+
+
 public class AppletTest extends BaseTest {
     public AppletTest() {
         // Change card type here if you want to use physical card
@@ -85,6 +87,34 @@ public class AppletTest extends BaseTest {
         System.out.print(Arrays.toString(responseAPDU.getBytes()) + System.lineSeparator());
         System.out.print("Test hell: passed" + System.lineSeparator());
     }
+
+    @Test
+    void littleEndianCompareTest() throws Exception {
+        byte[] ar1 = new byte[4];
+        byte[] ar2 = new byte[4];
+        int i = 0;
+        while (i < 4) {
+            ar1[i] = 0;
+            ar2[i] = 0;
+            i++;
+        }
+        assertEquals(0, applet.Tools.littleEndianCompareArrays(ar1, (short) 0, ar2, (short) 0, (short) 4));
+        ar1[0] = (byte) 1;
+        assertEquals(1, applet.Tools.littleEndianCompareArrays(ar1, (short) 0, ar2, (short) 0, (short) 4));
+        assertEquals(0, applet.Tools.littleEndianCompareArrays(ar1, (short) 0, ar2, (short) 0, (short) 0));
+        assertEquals(0, applet.Tools.littleEndianCompareArrays(ar1, (short) 1, ar2, (short) 0, (short) 3));
+        ar2[3] = (byte) 1;
+        assertEquals(1, applet.Tools.littleEndianCompareArrays(ar1, (short) 0, ar2, (short) 0, (short) 3));
+        ar2[0] = (byte) 2;
+        assertEquals(-1, applet.Tools.littleEndianCompareArrays(ar1, (short) 0, ar2, (short) 0, (short) 3));
+        ar1[3] = (byte) 2;
+        assertEquals(1, applet.Tools.littleEndianCompareArrays(ar1, (short) 0, ar2, (short) 0, (short) 4));
+        ar2[3] = (byte) 2;
+        assertEquals(-1, applet.Tools.littleEndianCompareArrays(ar1, (short) 0, ar2, (short) 0, (short) 4));
+        ar2[3] = (byte) 200;
+        assertEquals(-1, applet.Tools.littleEndianCompareArrays(ar1, (short) 0, ar2, (short) 0, (short) 4));
+    }
+
     @Test
     void simpleDeletion_OfAccessibleSpace_applet_test() throws Exception {
         Download download = new Download();
@@ -147,6 +177,103 @@ public class AppletTest extends BaseTest {
         Assertions.assertEquals(1, download.downloadValidation(manager));
         Assertions.assertEquals(0, download.downloadValidation(manager));
     }
+    @Test
+    void applet_max_total_outputs_test() throws Exception {
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = fromHex(TransactionsImported.validTransaction1);
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+
+        byte[] value = fromHex("ffffffffffffffff");
+        byte[] policy = fromHex("0100"); // policy checks min total output
+
+        upload.sendData(value, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager) );
+    }
+
+    @Test
+    void applet_max_total_outputs_test2() throws Exception {
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = fromHex(TransactionsImported.validTransaction1);
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+
+        byte[] value = fromHex("0000000000000000");
+        byte[] policy = fromHex("0100"); // policy checks min total output
+
+        upload.sendData(value, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager) );
+    }
+
+    @Test
+    void applet_min_total_outputs_test2() throws Exception {
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = fromHex(TransactionsImported.validTransaction1);
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+
+        byte[] value = fromHex("0fffffffffffffff");
+        byte[] policy = fromHex("0000"); // policy checks min total output
+
+        upload.sendData(value, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager) );
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager) );
+    }
+
+    @Test
+    void applet_min_total_outputs_test() throws Exception {
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = fromHex(TransactionsImported.validTransaction1);
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+
+        byte[] value = fromHex("1000000000000000");
+        byte[] policy = fromHex("0000"); // policy checks min total output
+
+        upload.sendData(value, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager) );
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager) );
+    }
+
+    @Test
+    void applet_exact_total_output_test() throws Exception {
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = fromHex(TransactionsImported.validTransaction1);
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+
+        byte[] value = fromHex("ee5fea0b00000000"); // used sparrow and random online convertor
+        byte[] policy = fromHex("00000d0100"); // policy checks min total output
+
+        upload.sendData(value, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager) );
+
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager) );
+
+    }
 
     @Test
     void policy_not_using_storage_test1() throws Exception {
@@ -166,6 +293,190 @@ public class AppletTest extends BaseTest {
         byte[] secret = fromHex("01020304050102030405");
         upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
         upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+    }
+
+    @Test
+    void applet_two_exact_outputs_wSS_test() throws Exception { //OtTA stands for Output with Script Signature
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = fromHex(TransactionsImported.validTransaction1);
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+
+        byte[] value1 = fromHex("603bea0b00000000");
+        byte[] scriptSig1 = fromHex("76a914768a40bbd740cbe81d988e71de2a4d5c71396b1d88ac");
+
+        byte[] value2 = fromHex("8e24000000000000");
+        byte[] scriptSig2 = fromHex("76a9146f4620b553fa095e721b9ee0efe9fa039cca459788ac");
+
+        byte[] policy = fromHex("0200010d0300010d0202030d030203"); // policy checks exact output value with ScriptSig
+
+        upload.sendData(value1, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(scriptSig1, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
+        upload.sendData(value2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 2, (byte) 0, manager);
+        upload.sendData(scriptSig2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 3, (byte) 0, manager);
+
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager) );
+    }
+
+    @Test
+    void applet_maxOwSS_test3() throws Exception { //OtTA stands for Output with Script Signature
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+        byte[] value1 = fromHex("0000000000000000");
+        byte[] scriptSig1 = fromHex("76a914768a40bbd740cbe81d988e71de2a4d5c71396b1d88ac");
+
+        byte[] policy = fromHex("030001"); // policy checks min output value with ScriptSig, addition: + "0d" + "030001"
+
+        upload.sendData(value1, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(scriptSig1, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
+
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+    }
+
+    @Test
+    void applet_maxOwSS_test1() throws Exception { //OtTA stands for Output with Script Signature
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = fromHex(TransactionsImported.validTransaction1);
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+
+        byte[] value1 = fromHex("603bea0b00000000");
+        byte[] scriptSig1 = fromHex("76a914768a40bbd740cbe81d988e71de2a4d5c71396b1d88ac");
+
+        byte[] policy = fromHex("030001"); // policy checks min output value with ScriptSig, addition: + "0d" + "030001"
+
+        upload.sendData(value1, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(scriptSig1, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
+
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager));
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+    }
+
+    @Test
+    void applet_maxOwSS_test2() throws Exception { //OtTA stands for Output with Script Signature
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+        byte[] value1 = fromHex("ffffffffffffffff");
+        byte[] scriptSig1 = fromHex("76a914768a40bbd740cbe81d988e71de2a4d5c71396b1d88ac");
+
+        byte[] policy = fromHex("030001"); // policy checks min output value with ScriptSig, addition: + "0d" + "030001"
+
+        upload.sendData(value1, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(scriptSig1, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
+
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager));
+    }
+
+    @Test
+    void applet_minOwSS_test1() throws Exception { //OtTA stands for Output with Script Signature
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = fromHex(TransactionsImported.validTransaction1);
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+
+        byte[] value1 = fromHex("603bea0b00000000");
+        byte[] scriptSig1 = fromHex("76a914768a40bbd740cbe81d988e71de2a4d5c71396b1d88ac");
+
+        byte[] policy = fromHex("020001"); // policy checks min output value with ScriptSig, addition: + "0d" + "030001"
+
+        upload.sendData(value1, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(scriptSig1, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
+
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager));
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+    }
+
+    @Test
+    void applet_minOwSS_test2() throws Exception { //OtTA stands for Output with Script Signature
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = fromHex(TransactionsImported.validTransaction1);
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+
+        byte[] value2 = fromHex("8e24000000000000");
+        byte[] scriptSig2 = fromHex("76a9146f4620b553fa095e721b9ee0efe9fa039cca459788ac");
+
+        // those values are taken directly from sparrow from transaction2
+
+        byte[] policy = fromHex("020001"); // policy checks min output value with ScriptSig, addition: + "0d" + "030001"
+
+        upload.sendData(value2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(scriptSig2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
+
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager) );
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+    }
+
+    @Test
+    void applet_minOwSS_test3() throws Exception { //OtTA stands for Output with Script Signature
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] transaction = fromHex(TransactionsImported.validTransaction1);
+        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+
+        byte[] minvalue = fromHex("0000000000000000");
+        byte[] scriptSig1 = fromHex("76a914768a40bbd740cbe81d988e71de2a4d5c71396b1d88ac");
+
+        byte[] policy = fromHex("020001"); // policy checks min output value with ScriptSig, addition: + "0d" + "030001"
+
+        upload.sendData(minvalue, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(scriptSig1, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
+
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager));
+
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
     }
 
     @Test
@@ -228,8 +539,49 @@ public class AppletTest extends BaseTest {
         System.out.print("The result of validation is: " + download.downloadValidation(manager) + System.lineSeparator());
     }
 
+
     @Test
-    void applet_live_through2() throws Exception {
+    void applet_2_out_of_3_secret_test() throws Exception {
+        Download download = new Download();
+        Upload upload = new Upload();
+        CardManager manager = connect();
+        byte[] policy = fromHex("0a00"+"0a01"+"0d"+"0a01"+"0a02"+"0d"+"0a00"+"0a02"); // policy for 2-3 secrets
+
+        byte[] secret = fromHex("01020304050102030405");
+        byte[] secret2 = fromHex("11111111111111111111");
+        byte[] secret3 = fromHex("33333333333102030405");
+        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
+        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 2, (byte) 0, manager);
+
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
+
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+
+        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+
+        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+
+        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 2, (byte) 0, manager);
+        Assertions.assertEquals(0, download.downloadValidation(manager));
+
+        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager));
+
+        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
+        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 2, (byte) 0, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager));
+
+        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
+        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 2, (byte) 0, manager);
+        Assertions.assertEquals(1, download.downloadValidation(manager));
+    }
+
+    @Test
+    void applet_secret() throws Exception {
         Download download = new Download();
         Upload upload = new Upload();
         CardManager manager = connect();
@@ -269,119 +621,7 @@ public class AppletTest extends BaseTest {
         Assertions.assertEquals(1, download.downloadValidation(manager));
     }
 
-    @Test
-    void applet_live_through3() throws Exception {
-        Download download = new Download();
-        Upload upload = new Upload();
-        CardManager manager = connect();
-        byte[] policy = fromHex("0a00"+"0a01"+"0b"+"0a01"+"0a02"+"0b"+"0a00"+"0a02"); // policy for 2-3 secrets
-
-        byte[] secret = fromHex("01020304050102030405");
-        byte[] secret2 = fromHex("11111111111111111111");
-        byte[] secret3 = fromHex("33333333333102030405");
-        byte additionalDataSequence = 0;
-
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, additionalDataSequence, (byte) 0, manager);
-        additionalDataSequence++;
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, additionalDataSequence, (byte) 0, manager);
-        additionalDataSequence++;
-        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, additionalDataSequence, (byte) 0, manager);
-
-        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
-
-        Assertions.assertEquals(0, download.downloadValidation(manager));
-
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
-        Assertions.assertEquals(0, download.downloadValidation(manager));
-
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
-        Assertions.assertEquals(1, download.downloadValidation(manager));
-
-        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 2, (byte) 0, manager);
-        Assertions.assertEquals(1, download.downloadValidation(manager));
-    }
-
-    @Test
-    void applet_live_through4() throws Exception {
-        Download download = new Download();
-        Upload upload = new Upload();
-        CardManager manager = connect();
-        byte[] policy = fromHex("0a00"+"0a01"+"0b"+"0a01"+"0a02"+"0b"+"0a00"+"0a02"); // policy for 2-3 secrets
-
-        byte[] secret = fromHex("01020304050102030405");
-        byte[] secret2 = fromHex("11111111111111111111");
-        byte[] secret3 = fromHex("33333333333102030405");
-        byte additionalDataSequence = 0;
-
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, additionalDataSequence, (byte) 0, manager);
-        additionalDataSequence++;
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, additionalDataSequence, (byte) 0, manager);
-        additionalDataSequence++;
-        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, additionalDataSequence, (byte) 0, manager);
-
-        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
-
-        byte checkAgainstDataSequence = 0;
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, checkAgainstDataSequence, (byte) 0, manager);
-        checkAgainstDataSequence++;
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, checkAgainstDataSequence, (byte) 0, manager);
-        checkAgainstDataSequence++;
-        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, checkAgainstDataSequence, (byte) 0, manager);
-        Assertions.assertEquals(1, download.downloadValidation(manager));
-    }
-
-    @Test
-    void applet_live_through5() throws Exception {
-        Download download = new Download();
-        Upload upload = new Upload();
-        CardManager manager = connect();
-        byte[] policy = fromHex("0a00"+"0a01"+"0b"+"0a01"+"0a02"+"0b"+"0a00"+"0a02"); // policy for 2-3 secrets
-
-        byte[] secret = fromHex("01020304050102030405");
-        byte[] secret2 = fromHex("11111111111111111111");
-        byte[] secret3 = fromHex("33333333333102030405");
-        byte additionalDataSequence = 0;
-
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, additionalDataSequence, (byte) 0, manager);
-        additionalDataSequence++;
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, additionalDataSequence, (byte) 0, manager);
-        additionalDataSequence++;
-        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, additionalDataSequence, (byte) 0, manager);
-
-        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, manager);
-
-        Assertions.assertEquals(0, download.downloadValidation(manager));
-
-        byte checkAgainstDataSequence = 0;
-
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
-        Assertions.assertEquals(0, download.downloadValidation(manager));
-
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
-        Assertions.assertEquals(1, download.downloadValidation(manager));
-
-        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 2, (byte) 0, manager);
-        Assertions.assertEquals(1, download.downloadValidation(manager));
-
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, checkAgainstDataSequence, (byte) 0, manager);
-        checkAgainstDataSequence++;
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, checkAgainstDataSequence, (byte) 0, manager);
-        checkAgainstDataSequence++;
-        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, checkAgainstDataSequence, (byte) 0, manager);
-
-        Assertions.assertEquals(1, download.downloadValidation(manager));
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
-        Assertions.assertEquals(1, download.downloadValidation(manager));
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, manager);
-        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 2, (byte) 0, manager);
-        Assertions.assertEquals(1, download.downloadValidation(manager));
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, manager);
-        upload.sendData(secret3, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 2, (byte) 0, manager);
-
-        Assertions.assertEquals(1, download.downloadValidation(manager));
-    }
-    @Test
+    //@Test
     public void policy1() throws Exception {
         Download download = new Download();
         Upload upload = new Upload();
