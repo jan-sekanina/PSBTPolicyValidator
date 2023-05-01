@@ -1,6 +1,0 @@
-tests/TransactionsImported.java
- tests.TransactionsImported
-tests/BaseTest.java
- tests.BaseTest
-tests/AppletTest.java
- tests.AppletTest
