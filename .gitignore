@@ -1,1 +1,4 @@
 *.class
+.gradle
+.idea
+applet/build
