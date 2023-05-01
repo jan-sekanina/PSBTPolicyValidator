@@ -1,0 +1,16 @@
+tests/TransactionsImported.java
+ tests.TransactionsImported
+tests/keysImported.java
+ tests.keysImported
+communication/SetSignAndVerify.java
+ communication.SetSignAndVerify
+communication/Tools.java
+ communication.Tools
+communication/Upload.java
+ communication.Upload
+tests/AppletTest.java
+ tests.AppletTest
+communication/Download.java
+ communication.Download
+tests/BaseTest.java
+ tests.BaseTest
