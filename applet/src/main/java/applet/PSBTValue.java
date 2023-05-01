@@ -2,7 +2,7 @@ package applet;
 
 import static applet.MainApplet.PSBTdata;
 
-public class Value {
+public class PSBTValue {
     public short start = -1;
     public short value_len = -1;
     public short value_len_bytes = 1;

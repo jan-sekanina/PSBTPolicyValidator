@@ -28,10 +28,7 @@ public class AppletInstructions {
      * when I plan to create different upload class for PSBT transaction and different class for
      * applet initialization
      */
-    public static final short APPLET_INSTRUCTION_SUCC_MORE = (short) 0x9001;
-
     public static final short INSTRUCTION_VERSION = 0;
-
 
     public static final short CLASS_PSBT_UPLOAD = 0;
 
@@ -52,6 +49,7 @@ public class AppletInstructions {
     public static final short INS_DOWNLOAD_NUM_OUTPUT_V0 = 4;
     public static final short INS_DOWNLOAD_VERSION = 6;
     public static final short INS_DOWNLOAD_SIZE = 7;
+
     public static final short CLASS_DOWNLOAD_INPUT_MAP = 6; // p1 is position of map, map must be present, first is 0
     public static final short CLASS_DOWNLOAD_OUTPUT_MAP = 7; // --above--
 
@@ -66,14 +64,19 @@ public class AppletInstructions {
     public static final short CLASS_VALIDATE_POLICY = 16;
 
 
-    public static final short CLASS_PSBT_UPLOAD_AND_BACK = 4;
-    // scenario where applet parses the PSBT and then sends it back
-    // to implement this one will take greater changes in how upload works. Different upload might need to be implemented
-
     public static final short INS_REQUEST = 0;
     public static final short INS_UPLOAD = 1;
     public static final short INS_FINISH = 2;
     public static final short INS_DOWNLOAD_ARRAY = 3;
+
+    //applet error throws below
+
+    /*
+    public static final short SOME_CRYPTO_ERROR = (short) 0x8444;
+    public static final short ALREADY_UPLOADED_POLICY_ERROR = (short) 0x8555;
+    public static final short STORAGE_UNUSED_ERROR = (short) 0x8666;
+    cant do cos (short) 0x6666 != (int) 0x6666...
+     */
 
     //global keytype bytes below
     public static final byte PSBT_GLOBAL_UNSIGNED_TX = 0x00; // p2

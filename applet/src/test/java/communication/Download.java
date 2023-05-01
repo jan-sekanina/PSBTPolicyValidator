@@ -13,6 +13,7 @@ public class Download {
         ResponseAPDU rsp;
         cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP, AppletInstructions.INS_DOWNLOAD_VERSION, 0, 0);
         rsp = manager.transmit(cmd);
+        assert rsp.getSW() == 0x9000;
         byte[] ar = rsp.getData();
         return (short) (ar[0] << 8 | ar[1]);
     }
@@ -22,6 +23,7 @@ public class Download {
         ResponseAPDU rsp;
         cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_POLICY_SIZE, AppletInstructions.INS_REQUEST, 0, 0);
         rsp = manager.transmit(cmd);
+        assert rsp.getSW() == 0x9000;
         byte[] ar = rsp.getData();
         return download(manager, (byte) AppletInstructions.CLASS_DOWNLOAD_POLICY, (short) 0,
                 (short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff)));
@@ -32,8 +34,17 @@ public class Download {
         ResponseAPDU rsp;
         cmd = new CommandAPDU(AppletInstructions.CLASS_VALIDATE_POLICY, AppletInstructions.INS_REQUEST, 0, 0);
         rsp = manager.transmit(cmd);
+        assert rsp.getSW() == 0x9000;
         byte[] ar = rsp.getData();
         return (short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff));
+    }
+
+    public void downloadingExpectedSW(CardManager manager, int expectedSW) throws CardException {
+        CommandAPDU cmd;
+        ResponseAPDU rsp;
+        cmd = new CommandAPDU(AppletInstructions.CLASS_VALIDATE_POLICY, AppletInstructions.INS_REQUEST, 0, 0);
+        rsp = manager.transmit(cmd);
+        assert rsp.getSW() == expectedSW;
     }
 
     public short downloadSize(CardManager manager) throws CardException {
@@ -41,6 +52,7 @@ public class Download {
         ResponseAPDU rsp;
         cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP, AppletInstructions.INS_DOWNLOAD_SIZE, 0, 0);
         rsp = manager.transmit(cmd);
+        assert rsp.getSW() == 0x9000;
         byte[] ar = rsp.getData();
         return (short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff));
     }
@@ -49,6 +61,7 @@ public class Download {
         ResponseAPDU rsp;
         cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP, AppletInstructions.INS_DOWNLOAD_NUM_INPUT_V0, 0, 0);
         rsp = manager.transmit(cmd);
+        assert rsp.getSW() == 0x9000;
         byte[] ar = rsp.getData();
         return (short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff));
     }
@@ -58,6 +71,7 @@ public class Download {
         ResponseAPDU rsp;
         cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP, AppletInstructions.INS_DOWNLOAD_NUM_OUTPUT_V0, 0, 0);
         rsp = manager.transmit(cmd);
+        assert rsp.getSW() == 0x9000;
         byte[] ar = rsp.getData();
         return (short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff));
     }
@@ -67,6 +81,7 @@ public class Download {
         ResponseAPDU rsp;
         cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_INPUT, 0, input_index, 0);
         rsp = manager.transmit(cmd);
+        assert rsp.getSW() == 0x9000;
         byte[] ar = rsp.getData();
         return download(manager ,(byte) AppletInstructions.CLASS_DOWNLOAD_PSBT_ARRAY,(short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff)),
                 (short) ((ar[2] & 0xff) << 8 | (ar[3] & 0xff)));
@@ -77,6 +92,7 @@ public class Download {
         ResponseAPDU rsp;
         cmd = new CommandAPDU(AppletInstructions.CLASS_DOWNLOAD_OUTPUT, 0, output_index, 0);
         rsp = manager.transmit(cmd);
+        assert rsp.getSW() == 0x9000;
         byte[] ar = rsp.getData();
         return download(manager, (byte) AppletInstructions.CLASS_DOWNLOAD_PSBT_ARRAY, (short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff)),
                 (short) ((ar[2] & 0xff) << 8 | (ar[3] & 0xff)));

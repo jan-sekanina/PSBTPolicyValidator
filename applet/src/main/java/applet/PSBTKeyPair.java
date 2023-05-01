@@ -1,9 +1,9 @@
 package applet;
 
-public class KeyPair {
+public class PSBTKeyPair {
     public short start = -1;
-    public Key key = new Key();
-    public Value value = new Value();
+    public PSBTKey key = new PSBTKey();
+    public PSBTValue value = new PSBTValue();
 
     public void fill(short arrayIndex) {
         start = arrayIndex;
@@ -13,8 +13,6 @@ public class KeyPair {
 
     public short getSize() {
         return (short) (key.getSize() + value.getSize());
-        // TODO: find an easy!! way to check overflow
-
     }
 
     public void reset() {

@@ -21,35 +21,18 @@ public class Upload {
      */
 
     public byte[] sendData(byte[] data, byte uploadClass,  CardManager manager) throws Exception {
-        CommandAPDU cmd;
-        ResponseAPDU rsp;
-        short packetSize = AppletInstructions.PACKET_BUFFER_SIZE;
-        cmd = new CommandAPDU(uploadClass, AppletInstructions.INS_REQUEST, 0, 0);
-        rsp = manager.transmit(cmd);
-        assert rsp.getSW() == 0x9000;
-
-        int offset = 0;
-
-        while (offset + packetSize < data.length) {
-            cmd = new CommandAPDU(uploadClass, AppletInstructions.INS_UPLOAD, 0, 0, data, offset, packetSize, 0);
-            rsp = manager.transmit(cmd);
-            assert rsp.getSW() == 0x9000;
-            offset += packetSize;
-        }
-
-        cmd = new CommandAPDU(uploadClass, AppletInstructions.INS_UPLOAD, 0, 0, data, offset, data.length - offset);
-        rsp = manager.transmit(cmd);
-        assert rsp.getSW() == 0x9000;
-
-        cmd = new CommandAPDU(uploadClass, AppletInstructions.INS_FINISH, 0, 0);
-        rsp = manager.transmit(cmd);
-        assert rsp.getSW() == 0x9000;
-//      cmd = new CommandAPDU(1, 1, 1, 1, 1, 1, 1, 1);
-
-        return rsp.getBytes();
+        return sendData(data, uploadClass, (byte) 0, (byte) 0, manager);
     }
 
     public byte[] sendData(byte[] data, byte uploadClass, byte p1, byte p2,  CardManager manager) throws Exception {
+        return sendData(data, uploadClass, p1, p2, manager, 0x9000);
+    }
+
+    public byte[] sendData(byte[] data, byte uploadClass,  CardManager manager, int expectedSW) throws Exception {
+        return sendData(data, uploadClass, (byte) 0, (byte) 0, manager, expectedSW);
+    }
+
+    public byte[] sendData(byte[] data, byte uploadClass, byte p1, byte p2,  CardManager manager, int expectedSW) throws Exception {
         CommandAPDU cmd;
         ResponseAPDU rsp;
         short packetSize = AppletInstructions.PACKET_BUFFER_SIZE;
@@ -72,7 +55,7 @@ public class Upload {
 
         cmd = new CommandAPDU(uploadClass, AppletInstructions.INS_FINISH, p1, p2);
         rsp = manager.transmit(cmd);
-        assert rsp.getSW() == 0x9000;
+        assert rsp.getSW() == expectedSW;
 //      cmd = new CommandAPDU(1, 1, 1, 1, 1, 1, 1, 1);
 
         return rsp.getBytes();

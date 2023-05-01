@@ -3,31 +3,18 @@ package applet;
 import static applet.MainApplet.*;
 
 public class Tools {
-
-    /**
-     * function to transform two bytes in little endian short
-     * @param zero zeroth(lol) byte
-     * @param first firsth byte
-     * @return
-     */
-
-    public static short toShort(byte zero, byte first) {
-        return (short) ((zero & 0xff) * 256 + (first & 0xff)); // TODO: have to check overflow
-    }
-
-
     /**
      * compactSizeInt encoded in Little Endian of max size short
      * more documentation here:
      * https://en.bitcoin.it/wiki/Protocol_documentation#Variable_length_integer
-     * @param int_start index in psbt data from where get the Int
+     * @param intStart index in psbt data from where get the Int
      * @return converted short
      */
-    public static short compactWeirdoInt(short int_start) {
-        if ((short) (PSBTdata[int_start] & 0xff) == 0xfd) {
-            return (Tools.toShort(PSBTdata[(short) (int_start + 1)], PSBTdata[(short) (int_start + 2)]));
+    public static short compactWeirdoInt(short intStart) {
+        if ((short) (PSBTdata[intStart] & 0xff) == 0xfd) {
+            return (short) ((PSBTdata[(short) (intStart + 1)] & 0xff) << 8 | (PSBTdata[(short) (intStart + 2)] & 0xff));
         }
-        return (short) (PSBTdata[int_start] & 0xff);
+        return (short) (PSBTdata[intStart] & 0xff);
     }
 
     public static short byteSizeOfCWI(short CWI) {
@@ -46,22 +33,23 @@ public class Tools {
         }
         return 0;
     }
+
     public static void getTotalOutput() {
         short i = 0;
         if (GlobalMap.PSBTversion == 0) {
-            while (i < MainApplet.psbt.global_map.globalUnsignedTX.output_count) {
-                satoshisPlusLE(totalOutput, PSBTdata, MainApplet.psbt.global_map.globalUnsignedTX.outputs[i].value_start);
+            while (i < MainApplet.psbt.globalMap.globalUnsignedTX.output_count) {
+                satoshisPlusLE(totalOutput, PSBTdata, MainApplet.psbt.globalMap.globalUnsignedTX.outputs[i].valueStart);
                 i++;
             }
         }
         if (GlobalMap.PSBTversion == 2) {
-            short keytype;
-            while (i < MainApplet.psbt.global_map.output_maps_total) {
+            short keyType;
+            while (i < MainApplet.psbt.globalMap.outputMapsTotal) {
                 short key_pair = 0;
-                while (key_pair < MainApplet.psbt.output_maps[i].current_key_pair) {
-                    keytype = MainApplet.psbt.output_maps[i].key_pairs[key_pair].key.key_type;
-                    if (keytype == AppletInstructions.PSBT_OUT_AMOUNT) {
-                        satoshisPlusLE(totalOutput, PSBTdata, MainApplet.psbt.output_maps[i].key_pairs[key_pair].value.start);
+                while (key_pair < MainApplet.psbt.outputMaps[i].currentKeyPair) {
+                    keyType = MainApplet.psbt.outputMaps[i].keyPairs[key_pair].key.keyKype;
+                    if (keyType == AppletInstructions.PSBT_OUT_AMOUNT) {
+                        satoshisPlusLE(totalOutput, PSBTdata, MainApplet.psbt.outputMaps[i].keyPairs[key_pair].value.start);
                     }
                     key_pair++;
                 }
@@ -75,7 +63,7 @@ public class Tools {
         while (i >= 0) {
             if ((short) (((res[i] & 0xff) + (plusArray[(short) (startArray + i)] & 0xff))) > 0xff) {
                 res[i] = (byte) ((res[i] & 0xff) + (plusArray[(short) (startArray + i)] & 0xff));
-                res[i - 1]++; // this should not overflow considering maxSatoshis = "000040075AF07507";
+                res[(short) (i - 1)]++; // this should not overflow considering maxSatoshis = "000040075AF07507";
             } else {
                 res[i] = (byte) ((res[i] & 0xff) + (plusArray[(short) (startArray + i)] & 0xff));
             }

@@ -5,51 +5,51 @@ import static applet.MainApplet.PSBTdata;
 
 public class GlobalMap extends GeneralMap {
     short input_maps_total = -1;
-    short output_maps_total = -1;
+    short outputMapsTotal = -1;
     static short PSBTversion = 0;
     GlobalUnsignedTX globalUnsignedTX = new GlobalUnsignedTX();
 
     public void fill(short arrayIndex) {
         map_start = (short) (arrayIndex + 1);
-        while ((PSBTdata[(short) (arrayIndex + map_size)] & 0xff) != 0x00 && current_key_pair < (short) (NUM_OF_KEYPAIR - 1)) {
-            current_key_pair++;
-            key_pairs[current_key_pair].fill((short) (arrayIndex + map_size));
+        while ((PSBTdata[(short) (arrayIndex + map_size)] & 0xff) != 0x00 && currentKeyPair < (short) (NUM_OF_KEYPAIR - 1)) {
+            currentKeyPair++;
+            keyPairs[currentKeyPair].fill((short) (arrayIndex + map_size));
 
-            if (key_pairs[current_key_pair].key.key_type == PSBT_GLOBAL_UNSIGNED_TX) {
+            if (keyPairs[currentKeyPair].key.keyKype == PSBT_GLOBAL_UNSIGNED_TX) {
                 globalUnsignedTX.fill((short) (arrayIndex + map_size + 2 +
-                        key_pairs[current_key_pair].value.value_len_bytes));
+                        keyPairs[currentKeyPair].value.value_len_bytes));
             }
 
-            if (key_pairs[current_key_pair].key.key_type == PSBT_GLOBAL_INPUT_COUNT) {
-                input_maps_total = key_pairs[current_key_pair].value.getByte((short) 0);
+            if (keyPairs[currentKeyPair].key.keyKype == PSBT_GLOBAL_INPUT_COUNT) {
+                input_maps_total = keyPairs[currentKeyPair].value.getByte((short) 0);
             }
 
-            if (key_pairs[current_key_pair].key.key_type == PSBT_GLOBAL_OUTPUT_COUNT) {
-                output_maps_total = key_pairs[current_key_pair].value.getByte((short) 0);
+            if (keyPairs[currentKeyPair].key.keyKype == PSBT_GLOBAL_OUTPUT_COUNT) {
+                outputMapsTotal = keyPairs[currentKeyPair].value.getByte((short) 0);
             }
 
-            if (key_pairs[current_key_pair].key.key_type == PSBT_GLOBAL_TX_VERSION) {
-                PSBTversion = key_pairs[current_key_pair].value.getByte((short) 0);
+            if (keyPairs[currentKeyPair].key.keyKype == PSBT_GLOBAL_TX_VERSION) {
+                PSBTversion = keyPairs[currentKeyPair].value.getByte((short) 0);
             }
 
             // TODO maybe add more special key types here later on
 
-            map_size += key_pairs[current_key_pair].getSize();
+            map_size += keyPairs[currentKeyPair].getSize();
         }
     }
 
         public void reset() {
             short i = 0;
             while (i < NUM_OF_KEYPAIR) {
-                key_pairs[i].reset();
+                keyPairs[i].reset();
                 i++;
             }
             input_maps_total = -1;
-            output_maps_total = -1;
+            outputMapsTotal = -1;
             PSBTversion = 0;
             globalUnsignedTX.reset();
             map_start = -1;
-            current_key_pair = -1;
+            currentKeyPair = -1;
             map_size = 0;
     }
 }

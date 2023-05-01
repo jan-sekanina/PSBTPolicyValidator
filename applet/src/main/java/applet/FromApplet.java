@@ -31,7 +31,7 @@ public class FromApplet {
         apdu.setOutgoingAndSend((short) 0, (short) 4);
     }
 
-    static void send_data(APDU apdu, KeyPair keyPair) {
+    static void send_data(APDU apdu, PSBTKeyPair keyPair) {
         apdu.getBuffer()[0] = (byte) (keyPair.key.start << 8);
         apdu.getBuffer()[1] = (byte) (keyPair.key.start);
         apdu.getBuffer()[2] = (byte) ((keyPair.key.start + keyPair.getSize()) << 8);
@@ -48,17 +48,10 @@ public class FromApplet {
     }
 
     public static void send_data(APDU apdu, GlobalUnsignedTXOutput output) {
-        apdu.getBuffer()[0] = (byte) (output.value_start << 8);
-        apdu.getBuffer()[1] = (byte) (output.value_start);
-        apdu.getBuffer()[2] = (byte) ((output.size + output.value_start) << 8);
-        apdu.getBuffer()[3] = (byte) (output.size + output.value_start);
+        apdu.getBuffer()[0] = (byte) (output.valueStart << 8);
+        apdu.getBuffer()[1] = (byte) (output.valueStart);
+        apdu.getBuffer()[2] = (byte) ((output.size + output.valueStart) << 8);
+        apdu.getBuffer()[3] = (byte) (output.size + output.valueStart);
         apdu.setOutgoingAndSend((short) 0, (short) 4);
     }
 }
-
-        /**
-    static void send_data(APDU apdu, KeyPair key_pair) {
-        //TODO rewrite this to take a byte of KeyPair type instead of itself
-        send_data(apdu, PSBTdata, key_pair.start, key_pair.getSize());
-    }
-         **/

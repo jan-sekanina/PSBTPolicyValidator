@@ -1,7 +1,6 @@
 package applet;
 
 import static applet.MainApplet.PSBTdata;
-import static applet.MainApplet.controlArray;
 import static applet.Tools.byteSizeOfCWI;
 import static applet.Tools.compactWeirdoInt;
 
@@ -36,7 +35,6 @@ public class GlobalUnsignedTX {
         version = (short) PSBTdata[start];
         size += 4;
         input_count = getCount();
-        controlArray[0] = (byte) getCount();
         size += byteSizeOfCWI(input_count);
 
 
@@ -46,7 +44,6 @@ public class GlobalUnsignedTX {
         }
 
         output_count = getCount();
-        controlArray[1] = (byte) getCount();
         size += byteSizeOfCWI(output_count);
 
         for (short i = 0; i < output_count; i++) {
