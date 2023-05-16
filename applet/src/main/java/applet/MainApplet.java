@@ -305,6 +305,8 @@ public class MainApplet extends Applet implements MultiSelectable {
                     break;
 
                 case Policy.signedPSBT:
+                    SetAndVerify.setPublicKey(privDataStorage[policy[(short) (stepCounter + 1)]].array,
+                            privDataStorage[policy[(short) (stepCounter + 1)]].offset);
                     try {
                         if (SetAndVerify.verifyECDSA(PSBTdata, transactionOffset, pubDataStorage[policy[(short) (stepCounter + 1)]].array,
                                 pubDataStorage[policy[(short) (stepCounter + 1)]].offset)) {

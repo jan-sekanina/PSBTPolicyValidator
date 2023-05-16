@@ -384,7 +384,7 @@ public class AppletTest extends BaseTest {
     }
 
     @Test
-    void appletSignedPSBTtest() throws Exception {
+    void appletSignedPSBTTest() throws Exception {
         Download download = new Download();
         Upload upload = new Upload();
         CardManager manager = connect();
@@ -396,7 +396,7 @@ public class AppletTest extends BaseTest {
         setBoth(priKey, pubKey);
         short sigLen = SetSignAndVerify.SignECDSA(transaction, signatureTMP);
         byte[] signature = new byte[sigLen];
-        Util.arrayCopyNonAtomic(signatureTMP, (short) 0, signature, (short) 0, sigLen); //  disgusting stuff I know
+        Util.arrayCopyNonAtomic(signatureTMP, (short) 0, signature, (short) 0, sigLen);
 
         byte[] policy = fromHex("0800"); // policy checks signed transaction
 
@@ -405,9 +405,8 @@ public class AppletTest extends BaseTest {
         upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UP, manager);
 
         upload.sendData(signature, (byte) AppletInstructions.CLASS_ADD_DATA_UP, (byte) 0, (byte) 0, manager);
-
         upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UP, manager);
-        upload.sendData(signature, (byte) AppletInstructions.CLASS_ADD_DATA_UP, (byte) 0, (byte) 0, manager);
+
         Assertions.assertEquals(0, download.downloadValidation(manager));
 
         upload.sendData(signature, (byte) AppletInstructions.CLASS_ADD_DATA_UP, (byte) 0, (byte) 0, manager);
