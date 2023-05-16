@@ -51,14 +51,7 @@ Or inspect already installed applets:
 
 
 ## Future Work
-I would like to implement a transaction signing and
-raw transaction serializing, with the possibility of using a key pair
-generated directly on the Card and the applet inscribing its own re-
-turn addresses. Adding more new Atoms is something I see as the
-most probable as new ones are already coming to mind, for example,
-extended Signed Time Atom, which would increase the time needed
-by a given value each time validation would be satisfied. I could also
-imagine combining this applet with other secure hardware or bio-metric devices, if possible.
+I would like to implement a transaction signing and raw transaction serializing, with the possibility of using a key pairgenerated directly on the Card and the applet inscribing its own return addresses. Adding more new Atoms is something I see as the most probable as new ones are already coming to mind, for example, extended Signed Time Atom, which would increase the time needed by a given value each time validation would be satisfied. I could also imagine combining this applet with other secure hardware or bio-metric devices, if possible.
 
 ## Dependencies
 This project uses mainly:
