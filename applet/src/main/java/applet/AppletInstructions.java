@@ -30,20 +30,17 @@ public class AppletInstructions {
      */
     public static final short INSTRUCTION_VERSION = 0;
 
-    public static final short CLASS_PSBT_UPLOAD = 0;
+    public static final short CLASS_PSBT_UP = 0;
 
-    public static final short CLASS_POLICY_UPLOAD = 1;
+    public static final short CLASS_POLICY_UP = 1;
     // simple scenario where applet returns "HAND SHAKE" in bytes
     public static final short CLASS_HAND_SHAKE = 3;
-    public static final short CLASS_ADDITIONAL_DATA_UPLOAD = 2; // p1 will determine reference, where to store it
-    public static final short CLASS_DOWNLOAD_PSBT_ARRAY = 4;
+    public static final short CLASS_ADD_DATA_UP = 2; // p1 will determine reference, where to store it
+    public static final short CLASS_DOWN_PSBT_ARRAY = 4;
 
     public static final short CLASS_SET_MODE_SECRET = 14;
     public static final short CLASS_SET_MODE_TIME = 15;
 
-    /**
-     * Below are debug classes
-     */
     public static final short CLASS_DOWNLOAD_GLOBAL_MAP = 5; // p1 which global map, here always 0
     public static final short INS_DOWNLOAD_NUM_INPUT_V0 = 5;
     public static final short INS_DOWNLOAD_NUM_OUTPUT_V0 = 4;

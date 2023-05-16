@@ -1,5 +1,5 @@
 package tests;
-public class keysImported {
+public class TestKeys {
     //openssl ecparam -name secp256k1 -genkey -noout -out ECkeys.txt
     //openssl ec -in ECkeys.txt -noout -text
     public static String sslPri1 = "6fbf07b8fb93cb32b13b44b6e0565653954886ff09d1d309bdd9fe34f4050fa9";

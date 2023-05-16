@@ -13,17 +13,14 @@ public class MainApplet extends Applet implements MultiSelectable {
      */
 
     public static PSBT psbt;
-    public static ArrayInDisguise[] privDataStorage; // used before policy is locked
-    public static ArrayInDisguise[] pubDataStorage; // used after policy is locked
+    public static ArrayInDisguise[] privDataStorage;  // used before policy is locked
+    public static ArrayInDisguise[] pubDataStorage;  // used after policy is locked
     public static byte[] PSBTdata;
     public static byte[] policy;
     public static byte[] totalOutput;
     static short transactionOffset;
     static short policyOffset;
-    static short policyUploadLocked; // 0 - locked, 1 - opened
-
-    //private byte[] data = JCSystem.makeTransientByteArray((short) (1024 * 10),
-    //		JCSystem.CLEAR_ON_DESELECT);
+    static short policyUploadLocked;  // 0 - locked, 1 - opened
 
     public static void install(byte[] bArray, short bOffset, byte bLength) {
         new MainApplet(bArray, bOffset, bLength);
@@ -60,10 +57,8 @@ public class MainApplet extends Applet implements MultiSelectable {
         short p2 = apduBuffer[ISO7816.OFFSET_P2];
         short dataOffset = apduBuffer[ISO7816.OFFSET_CDATA];
 
-        /**
-         * this uploads PSBT
-         */
-        if (cla == AppletInstructions.CLASS_PSBT_UPLOAD) {
+        // this uploads PSBT
+        if (cla == AppletInstructions.CLASS_PSBT_UP) {
             if (ins == AppletInstructions.INS_REQUEST) {
                 transactionOffset = 0;
             }
@@ -82,16 +77,12 @@ public class MainApplet extends Applet implements MultiSelectable {
             }
         }
 
-        if (cla == AppletInstructions.CLASS_POLICY_UPLOAD && policyUploadLocked == 1) {
+        if (cla == AppletInstructions.CLASS_POLICY_UP && policyUploadLocked == 1) {
             ISOException.throwIt((short) 0x8444);
         }
 
-        /**
-         * this uploads Policy represented as array of bytes
-         */
-        if (cla == AppletInstructions.CLASS_POLICY_UPLOAD && policyUploadLocked == 0) {
-            if (ins == AppletInstructions.INS_REQUEST) {
-            }
+        // this uploads Policy represented as array of bytes
+        if (cla == AppletInstructions.CLASS_POLICY_UP && policyUploadLocked == 0) {
             if (ins == AppletInstructions.INS_UPLOAD) {
                 Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, policy, policyOffset, (short) (lc & 0xff));
                 policyOffset += (short) (lc & 0xff);
@@ -104,10 +95,8 @@ public class MainApplet extends Applet implements MultiSelectable {
             }
         }
 
-        /**
-         * this uploads additional data for Policy evaluation
-         */
-        if (cla == AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD && policyUploadLocked == 0) {
+        //  this uploads additional data for Policy evaluation
+        if (cla == AppletInstructions.CLASS_ADD_DATA_UP && policyUploadLocked == 0) {
             if (ins == AppletInstructions.INS_REQUEST) {
                 privDataStorage[p1].offset = 0;
             }
@@ -115,11 +104,9 @@ public class MainApplet extends Applet implements MultiSelectable {
                 Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, privDataStorage[p1].array, privDataStorage[p1].offset, (short) (lc & 0xff));
                 privDataStorage[p1].offset += (short) (lc & 0xff);
             }
-            if (ins == AppletInstructions.INS_FINISH) {
-            }
         }
 
-        if (cla == AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD && policyUploadLocked == 1) { // Maybe different Class for DATA upload after policy is locked
+        if (cla == AppletInstructions.CLASS_ADD_DATA_UP && policyUploadLocked == 1) { // Maybe different Class for DATA upload after policy is locked
             if (ins == AppletInstructions.INS_REQUEST) {
                 pubDataStorage[p1].offset = 0;
             }
@@ -127,92 +114,90 @@ public class MainApplet extends Applet implements MultiSelectable {
                 Util.arrayCopyNonAtomic(apduBuffer, ISO7816.OFFSET_CDATA, pubDataStorage[p1].array, pubDataStorage[p1].offset, (short) (lc & 0xff));
                 pubDataStorage[p1].offset += (short) (lc & 0xff);
             }
-            if (ins == AppletInstructions.INS_FINISH) {
-            }
         }
 
-        if (cla == AppletInstructions.CLASS_DOWNLOAD_PSBT_ARRAY && ins == AppletInstructions.INS_DOWNLOAD_ARRAY) {
+        if (cla == AppletInstructions.CLASS_DOWN_PSBT_ARRAY && ins == AppletInstructions.INS_DOWNLOAD_ARRAY) {
             short from = (short) ((apduBuffer[ISO7816.OFFSET_CDATA] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 1] & 0xff));
             short to = (short) ((apduBuffer[ISO7816.OFFSET_CDATA + 2] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 3] & 0xff));
             if (from < 0 || to > PSBTdata.length) {
 		        return;
             }
-            FromApplet.send_data(apdu, PSBTdata, from, to);
+            FromApplet.sendData(apdu, PSBTdata, from, to);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_VERSION){
-            FromApplet.send_data(apdu, GlobalMap.PSBTversion);
+            FromApplet.sendData(apdu, GlobalMap.PSBTversion);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_SIZE){
-            FromApplet.send_data(apdu, PSBT.byte_size);
+            FromApplet.sendData(apdu, PSBT.byteSize);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_INPUT_V0){
             if (GlobalMap.PSBTversion == 0) {
-                FromApplet.send_data(apdu, psbt.globalMap.globalUnsignedTX.input_count);
+                FromApplet.sendData(apdu, psbt.globalMap.globalUnsignedTX.inputCount);
             }
             if (GlobalMap.PSBTversion == 2) {
-                FromApplet.send_data(apdu, PSBT.current_input_map);
+                FromApplet.sendData(apdu, PSBT.currentInputMap);
             }
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP && ins == AppletInstructions.INS_DOWNLOAD_NUM_OUTPUT_V0) {
             if (GlobalMap.PSBTversion == 0) {
-                FromApplet.send_data(apdu, psbt.globalMap.globalUnsignedTX.output_count);
+                FromApplet.sendData(apdu, psbt.globalMap.globalUnsignedTX.outputCount);
             }
             if (GlobalMap.PSBTversion == 2) {
-                FromApplet.send_data(apdu, PSBT.current_output_map);
+                FromApplet.sendData(apdu, PSBT.currentOutputMap);
             }
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_POLICY_SIZE && ins == AppletInstructions.INS_REQUEST) {
-            FromApplet.send_data(apdu, policyOffset);
+            FromApplet.sendData(apdu, policyOffset);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_POLICY) {
             short from = (short) ((apduBuffer[ISO7816.OFFSET_CDATA] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 1] & 0xff));
             short to = (short) ((apduBuffer[ISO7816.OFFSET_CDATA + 2] & 0xff) << 8 | (apduBuffer[ISO7816.OFFSET_CDATA + 3] & 0xff));
-            FromApplet.send_data(apdu, policy, from, to);
+            FromApplet.sendData(apdu, policy, from, to);
         }
 
         if (cla == AppletInstructions.CLASS_VALIDATE_POLICY) {
-            FromApplet.send_data(apdu, validatePolicy());
+            FromApplet.sendData(apdu, validatePolicy());
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_INPUT){
             if (GlobalMap.PSBTversion == 0) {
-                FromApplet.send_data(apdu, psbt.globalMap.globalUnsignedTX.inputs[p1]);
+                FromApplet.sendData(apdu, psbt.globalMap.globalUnsignedTX.inputs[p1]);
             }
 
             if (GlobalMap.PSBTversion == 2) {
-                FromApplet.send_data(apdu, psbt.input_maps[p1]);
+                FromApplet.sendData(apdu, psbt.inputMaps[p1]);
             }
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_OUTPUT){
             if (GlobalMap.PSBTversion == 0) {
-                FromApplet.send_data(apdu, psbt.globalMap.globalUnsignedTX.outputs[p1]);
+                FromApplet.sendData(apdu, psbt.globalMap.globalUnsignedTX.outputs[p1]);
             }
             if (GlobalMap.PSBTversion == 2) {
-                FromApplet.send_data(apdu, psbt.outputMaps[p1]);
+                FromApplet.sendData(apdu, psbt.outputMaps[p1]);
             }
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_ALL) {
-            FromApplet.send_data(apdu, psbt.globalMap);
+            FromApplet.sendData(apdu, psbt.globalMap);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_INPUT_ALL) {
-            FromApplet.send_data(apdu, psbt.input_maps[p1]);
+            FromApplet.sendData(apdu, psbt.inputMaps[p1]);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_OUTPUT_ALL) {
-            FromApplet.send_data(apdu, psbt.outputMaps[p1]);
+            FromApplet.sendData(apdu, psbt.outputMaps[p1]);
         }
 
         if (cla == AppletInstructions.CLASS_DOWNLOAD_GLOBAL_MAP_KEYPAIR) {
-            FromApplet.send_data(apdu, psbt.globalMap.keyPairs[p1]);
+            FromApplet.sendData(apdu, psbt.globalMap.keyPairs[p1]);
         }
 
         if (cla == AppletInstructions.CLASS_HAND_SHAKE) { // a bit arbitrary
@@ -261,13 +246,13 @@ public class MainApplet extends Applet implements MultiSelectable {
 
                 case Policy.minNumberofInputs:
                     if (GlobalMap.PSBTversion == 0) {
-                        if (policy[(short) (stepCounter + 1)] <= psbt.globalMap.globalUnsignedTX.input_count) {
+                        if (policy[(short) (stepCounter + 1)] <= psbt.globalMap.globalUnsignedTX.inputCount) {
                             orSection = 1;
                         }
                     }
 
                     if (GlobalMap.PSBTversion == 2) {
-                        if (policy[(short) (stepCounter + 1)] <= psbt.globalMap.input_maps_total) {
+                        if (policy[(short) (stepCounter + 1)] <= psbt.globalMap.inputMapsTotal) {
                             orSection = 1;
                         }
                     }
@@ -276,13 +261,13 @@ public class MainApplet extends Applet implements MultiSelectable {
 
                 case Policy.maxNumberofInputs:
                     if (GlobalMap.PSBTversion == 0) {
-                        if (policy[(short) (stepCounter + 1)] >= psbt.globalMap.globalUnsignedTX.input_count) {
+                        if (policy[(short) (stepCounter + 1)] >= psbt.globalMap.globalUnsignedTX.inputCount) {
                             orSection = 1;
                         }
                     }
 
                     if (GlobalMap.PSBTversion == 2) {
-                        if (policy[(short) (stepCounter + 1)] >= psbt.globalMap.input_maps_total) {
+                        if (policy[(short) (stepCounter + 1)] >= psbt.globalMap.inputMapsTotal) {
                             orSection = 1;
                         }
                     }
@@ -291,7 +276,7 @@ public class MainApplet extends Applet implements MultiSelectable {
 
                 case Policy.minNumberofOutputs:
                     if (GlobalMap.PSBTversion == 0) {
-                        if (policy[(short) (stepCounter + 1)] <= psbt.globalMap.globalUnsignedTX.output_count) {
+                        if (policy[(short) (stepCounter + 1)] <= psbt.globalMap.globalUnsignedTX.outputCount) {
                             orSection = 1;
                         }
                     }
@@ -306,7 +291,7 @@ public class MainApplet extends Applet implements MultiSelectable {
 
                 case Policy.maxNumberofOutputs:
                     if (GlobalMap.PSBTversion == 0) {
-                        if (policy[(short) (stepCounter + 1)] >= psbt.globalMap.globalUnsignedTX.output_count) {
+                        if (policy[(short) (stepCounter + 1)] >= psbt.globalMap.globalUnsignedTX.outputCount) {
                             orSection = 1;
                         }
                     }

@@ -37,7 +37,7 @@ public class Tools {
     public static void getTotalOutput() {
         short i = 0;
         if (GlobalMap.PSBTversion == 0) {
-            while (i < MainApplet.psbt.globalMap.globalUnsignedTX.output_count) {
+            while (i < MainApplet.psbt.globalMap.globalUnsignedTX.outputCount) {
                 satoshisPlusLE(totalOutput, PSBTdata, MainApplet.psbt.globalMap.globalUnsignedTX.outputs[i].valueStart);
                 i++;
             }
@@ -45,20 +45,20 @@ public class Tools {
         if (GlobalMap.PSBTversion == 2) {
             short keyType;
             while (i < MainApplet.psbt.globalMap.outputMapsTotal) {
-                short key_pair = 0;
-                while (key_pair < MainApplet.psbt.outputMaps[i].currentKeyPair) {
-                    keyType = MainApplet.psbt.outputMaps[i].keyPairs[key_pair].key.keyKype;
+                short keyPair = 0;
+                while (keyPair < MainApplet.psbt.outputMaps[i].currentKeyPair) {
+                    keyType = MainApplet.psbt.outputMaps[i].keyPairs[keyPair].key.keyKype;
                     if (keyType == AppletInstructions.PSBT_OUT_AMOUNT) {
-                        satoshisPlusLE(totalOutput, PSBTdata, MainApplet.psbt.outputMaps[i].keyPairs[key_pair].value.start);
+                        satoshisPlusLE(totalOutput, PSBTdata, MainApplet.psbt.outputMaps[i].keyPairs[keyPair].value.start);
                     }
-                    key_pair++;
+                    keyPair++;
                 }
                 i++;
             }
         }
     }
 
-    public static void satoshisPlusLE(byte[] res, byte[] plusArray, short startArray){ // my future self, keep in mind this is very targeted function
+    public static void satoshisPlusLE(byte[] res, byte[] plusArray, short startArray) {
         short i = 7;
         while (i >= 0) {
             if ((short) (((res[i] & 0xff) + (plusArray[(short) (startArray + i)] & 0xff))) > 0xff) {

@@ -2,9 +2,7 @@ package communication;
 
 public class Tools {
     public static byte[] fromHex(String hex){
-        // ukradeno
         byte[] res = new byte[hex.length() / 2];
-
         for (int i = 0; i < res.length; i++) {
             int index = i * 2;
             int j = Integer.parseInt(hex.substring(index, index + 2), 16);

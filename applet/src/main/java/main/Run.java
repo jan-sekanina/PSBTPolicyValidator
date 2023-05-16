@@ -24,8 +24,8 @@ public class Run {
         byte[] secret = fromHex("deadbeef");
         byte[] secret2 = fromHex("beefdead");
 
-        byte[] transaction = fromHex(TransactionsImported.validTransaction1);
-        byte[] transaction2 = fromHex(TransactionsImported.validTransaction2);
+        byte[] transaction = fromHex(TestTransactions.validTransaction1);
+        byte[] transaction2 = fromHex(TestTransactions.validTransaction2);
         String pol = "0a000d0a010d0402";
         byte[] policy = fromHex(pol); // policy checks signed transaction and a secret
 
@@ -36,27 +36,27 @@ public class Run {
 
 
         System.out.println("Uploading data to check against secrets.");
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, simulator);
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, simulator);
+        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADD_DATA_UP, (byte) 0, (byte) 0, simulator);
+        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADD_DATA_UP, (byte) 1, (byte) 0, simulator);
 
         System.out.println("Uploading policy. Policy is locked.");
-        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UPLOAD, simulator);
+        upload.sendData(policy, (byte) AppletInstructions.CLASS_POLICY_UP, simulator);
         System.out.println("Result of validation without uploading additional data: " + download.downloadValidation(simulator));
 
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, simulator);
+        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADD_DATA_UP, (byte) 0, (byte) 0, simulator);
         System.out.println("Result of validation after uploading the first secret only: " + download.downloadValidation(simulator));
 
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, simulator);
+        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADD_DATA_UP, (byte) 1, (byte) 0, simulator);
         System.out.println("Result of validation after uploading the second secret only: " + download.downloadValidation(simulator));
 
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, simulator);
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, simulator);
-        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, simulator);
+        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADD_DATA_UP, (byte) 0, (byte) 0, simulator);
+        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADD_DATA_UP, (byte) 1, (byte) 0, simulator);
+        upload.sendData(transaction, (byte) AppletInstructions.CLASS_PSBT_UP, simulator);
         System.out.println("Result of validation after uploading both secrets and transaction with one input: " + download.downloadValidation(simulator));
 
-        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 0, (byte) 0, simulator);
-        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADDITIONAL_DATA_UPLOAD, (byte) 1, (byte) 0, simulator);
-        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UPLOAD, simulator);
+        upload.sendData(secret, (byte) AppletInstructions.CLASS_ADD_DATA_UP, (byte) 0, (byte) 0, simulator);
+        upload.sendData(secret2, (byte) AppletInstructions.CLASS_ADD_DATA_UP, (byte) 1, (byte) 0, simulator);
+        upload.sendData(transaction2, (byte) AppletInstructions.CLASS_PSBT_UP, simulator);
 
         System.out.println("Result of validation after uploading both secrets and transaction with two inputs: "
         + download.downloadValidation(simulator));

@@ -9,7 +9,6 @@ import javax.smartcardio.ResponseAPDU;
 /**
  * class of my tests
  */
-
 public class Upload {
 
     public Upload() {
@@ -20,7 +19,6 @@ public class Upload {
      * @return array of byte of applet response, array size is the size of one packet
      * @throws Exception
      */
-
     public byte[] sendData(byte[] data, byte uploadClass,  CardSimulator simulator) throws Exception {
         return sendData(data, uploadClass, (byte) 0, (byte) 0, simulator);
     }

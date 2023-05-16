@@ -83,7 +83,7 @@ public class Download {
         rsp = simulator.transmitCommand(cmd);
         assert rsp.getSW() == 0x9000;
         byte[] ar = rsp.getData();
-        return download(simulator ,(byte) AppletInstructions.CLASS_DOWNLOAD_PSBT_ARRAY,(short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff)),
+        return download(simulator ,(byte) AppletInstructions.CLASS_DOWN_PSBT_ARRAY,(short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff)),
                 (short) ((ar[2] & 0xff) << 8 | (ar[3] & 0xff)));
     }
 
@@ -94,7 +94,7 @@ public class Download {
         rsp = simulator.transmitCommand(cmd);
         assert rsp.getSW() == 0x9000;
         byte[] ar = rsp.getData();
-        return download(simulator, (byte) AppletInstructions.CLASS_DOWNLOAD_PSBT_ARRAY, (short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff)),
+        return download(simulator, (byte) AppletInstructions.CLASS_DOWN_PSBT_ARRAY, (short) ((ar[0] & 0xff) << 8 | (ar[1] & 0xff)),
                 (short) ((ar[2] & 0xff) << 8 | (ar[3] & 0xff)));
     }
 

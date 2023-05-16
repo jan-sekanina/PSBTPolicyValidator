@@ -4,11 +4,11 @@ import static applet.MainApplet.PSBTdata;
 
 public class GeneralMap {
 
-    public short map_start = -1;
-    public short NUM_OF_KEYPAIR = 8;
+    public short mapStart = -1;
+    public final static short NUM_OF_KEYPAIR = 8;
     public short currentKeyPair = -1;
     public PSBTKeyPair[] keyPairs = new PSBTKeyPair[NUM_OF_KEYPAIR];
-    public short map_size = 0;
+    public short mapSize = 0;
 
     public GeneralMap() {
         short i = 0;
@@ -19,11 +19,11 @@ public class GeneralMap {
     }
 
     public void fill(short arrayIndex) {
-        map_start = (short) (arrayIndex + 1);
-        while ((PSBTdata[(short) (arrayIndex + map_size)] & 0xff) != (short)  0x00 && currentKeyPair < (short) (NUM_OF_KEYPAIR - 1)) {
+        mapStart = (short) (arrayIndex + 1);
+        while ((PSBTdata[(short) (arrayIndex + mapSize)] & 0xff) != (short)  0x00 && currentKeyPair < (short) (NUM_OF_KEYPAIR - 1)) {
             currentKeyPair++;
-            keyPairs[currentKeyPair].fill((short) (arrayIndex + map_size));
-            map_size += keyPairs[currentKeyPair].getSize();
+            keyPairs[currentKeyPair].fill((short) (arrayIndex + mapSize));
+            mapSize += keyPairs[currentKeyPair].getSize();
         }
     }
 
@@ -33,8 +33,8 @@ public class GeneralMap {
             keyPairs[i].reset();
             i++;
         }
-        map_start = -1;
+        mapStart = -1;
         currentKeyPair = -1;
-        map_size = 0;
+        mapSize = 0;
     }
 }

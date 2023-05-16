@@ -97,5 +97,4 @@ public class SetSignAndVerify {
         signEngine.init(publicKey, Signature.MODE_VERIFY);
         return signEngine.verify(msg, (short) 0, msgSize, sign, (short) 0, signLen);
     }
-    //  bouncyCastle -- crypto v Jave
 }

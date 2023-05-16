@@ -1,6 +1,6 @@
 package tests;
 
-public class TransactionsImported {
+public class TestTransactions {
     public static String validTransaction2detailed = ("70736274ff" +
             "0100" + //keylen keytype
             "a0" + //length 160

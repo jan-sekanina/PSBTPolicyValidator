@@ -5,24 +5,24 @@ import static applet.Tools.compactWeirdoInt;
 
 public class GlobalUnsignedTXOutput {
     short valueStart = -1;
-    short script_size_start = -1;
-    short script_size = -1;
-    short script_pub_key_start = -1;
+    short scriptSizeStart = -1;
+    short scriptSize = -1;
+    short scriptPubKeyStart = -1;
     short size = 0;
 
     void fill(short start){
         valueStart = start; // value has static size of 8 bytes
-        script_size_start = (short) (start + 8);
-        script_size = compactWeirdoInt(script_size_start);
-        script_pub_key_start = (short) (script_size_start + byteSizeOfCWI(script_size));
-        size = (short) (8 + byteSizeOfCWI(script_size) + script_size); // easier to read and understand this way
+        scriptSizeStart = (short) (start + 8);
+        scriptSize = compactWeirdoInt(scriptSizeStart);
+        scriptPubKeyStart = (short) (scriptSizeStart + byteSizeOfCWI(scriptSize));
+        size = (short) (8 + byteSizeOfCWI(scriptSize) + scriptSize); // easier to read and understand this way
     }
 
     void reset() {
         valueStart = -1;
-        script_size_start = -1;
-        script_size = -1;
-        script_pub_key_start = -1;
+        scriptSizeStart = -1;
+        scriptSize = -1;
+        scriptPubKeyStart = -1;
         size = 0;
     }
 }
