@@ -3,32 +3,16 @@ package applet;
 /**
  * Class of applet instructions to make testing and changing instructions easier
  * both MainApplet and MyTests are getting instructions from this class
- * <p>
- * It won't be possible for 'MyTests' class to get instructions from this class at the moment
- * the applet is installed on a physical card. The instructions will have to be hard coded into device
- * which is going to communicate with the applet.
- * <p>
- * Still very useful for testing and overseeing I hope.
- * <p>
+ *
  * I might consider transforming it to hashtable or more sophisticated data structure later on // this one aged well
  */
 
 public class AppletInstructions {
 
-
-
     public AppletInstructions() {
     }
 
     public static final short PACKET_BUFFER_SIZE = 250; // amount of data received in one packet
-
-
-    /**
-     * all data are uploaded with this class at the moment, that will probably change in the future
-     * when I plan to create different upload class for PSBT transaction and different class for
-     * applet initialization
-     */
-    public static final short INSTRUCTION_VERSION = 0;
 
     public static final short CLASS_PSBT_UP = 0;
 
@@ -66,7 +50,7 @@ public class AppletInstructions {
     public static final short INS_FINISH = 2;
     public static final short INS_DOWNLOAD_ARRAY = 3;
 
-    //applet error throws below
+    //  applet error throws below
 
     /*
     public static final short SOME_CRYPTO_ERROR = (short) 0x8444;
@@ -75,7 +59,7 @@ public class AppletInstructions {
     cant do cos (short) 0x6666 != (int) 0x6666...
      */
 
-    //global keytype bytes below
+    //  global keytype bytes below
     public static final byte PSBT_GLOBAL_UNSIGNED_TX = 0x00; // p2
     public static final byte PSBT_GLOBAL_XPUB = 0x01;
     public static final byte PSBT_GLOBAL_TX_VERSION = 0x02;
