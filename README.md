@@ -42,14 +42,6 @@ Or inspect already installed applets:
 ./gradlew listJavaCard
 ```
 
-## Running on simulator (jCardSim)
-
-As simple as:
-
-```bash
-./gradlew run
-```
-
 ## Running tests
 ```
 ./gradlew test --info --rerun-tasks
