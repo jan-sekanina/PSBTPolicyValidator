@@ -15,10 +15,10 @@ public class GlobalUnsignedTX {
     short version = -1;
     short size = 0;
 
-    short input_count = -1;
+    short inputCount = -1;
     GlobalUnsignedTXInput[] inputs = new GlobalUnsignedTXInput[MAX_COUNT_OF_IO];
 
-    short output_count = -1;
+    short outputCount = -1;
     GlobalUnsignedTXOutput[] outputs = new GlobalUnsignedTXOutput[MAX_COUNT_OF_IO];
 
     short lockTimeStart = -1;
@@ -32,21 +32,21 @@ public class GlobalUnsignedTX {
 
     public void fill(short arrayIndex){
         start = arrayIndex;
-        version = (short) PSBTdata[start];
+        version = PSBTdata[start];
         size += 4;
-        input_count = getCount();
-        size += byteSizeOfCWI(input_count);
+        inputCount = getCount();
+        size += byteSizeOfCWI(inputCount);
 
 
-        for (short i = 0; i < input_count; i++) {
+        for (short i = 0; i < inputCount; i++) {
             inputs[i].fill((short) (start + size));
             size += inputs[i].size;
         }
 
-        output_count = getCount();
-        size += byteSizeOfCWI(output_count);
+        outputCount = getCount();
+        size += byteSizeOfCWI(outputCount);
 
-        for (short i = 0; i < output_count; i++) {
+        for (short i = 0; i < outputCount; i++) {
             outputs[i].fill((short)(start + size));
             size += outputs[i].size;
         }
@@ -55,11 +55,6 @@ public class GlobalUnsignedTX {
     }
     short getCount() {
         return compactWeirdoInt((short) (start + size));
-    }
-
-    short ignoreInput(short bytesIgnored) {
-        short signature_scrip_size = compactWeirdoInt((short) (bytesIgnored + 36));
-        return (short) (signature_scrip_size + 40 + byteSizeOfCWI(signature_scrip_size));
     }
 
     void reset() {

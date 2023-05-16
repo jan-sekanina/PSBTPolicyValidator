@@ -32,9 +32,9 @@ public class Policy {
         short valueStart = 0;
         if (GlobalMap.PSBTversion == 0) {
             short i = 0;
-            while (i < MainApplet.psbt.globalMap.globalUnsignedTX.output_count) {
+            while (i < MainApplet.psbt.globalMap.globalUnsignedTX.outputCount) {
                 valueStart = MainApplet.psbt.globalMap.globalUnsignedTX.outputs[i].valueStart;
-                sigScrStart = MainApplet.psbt.globalMap.globalUnsignedTX.outputs[i].script_pub_key_start;
+                sigScrStart = MainApplet.psbt.globalMap.globalUnsignedTX.outputs[i].scriptPubKeyStart;
                 if (checkItself(storageValue, valueStart, storageSigScr, sigScrStart, notRes)) {
                     return true;
                 }

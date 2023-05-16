@@ -2,7 +2,6 @@ package main;
 
 public class Tools {
     public static byte[] fromHex(String hex){
-        // ukradeno
         byte[] res = new byte[hex.length() / 2];
 
         for (int i = 0; i < res.length; i++) {

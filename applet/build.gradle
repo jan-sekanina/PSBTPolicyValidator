@@ -128,8 +128,9 @@ javacard {
         cap {
             packageName 'applet'
             version '0.1'
-            aid '01:ff:ff:04:05:06:07:08:00'
-            output 'applet_main_applet.cap'
+            aid '50:53:42:54:50:6f:6c:69:63:79:56:61:6c:2e' //  PSBTPolicyVal.
+            //aid '01:ff:ff:04:05:06:07:08:00'
+            output 'PSBTPolicyValidator.cap'
 
 	        sources 'src/main/java/applet'
 
@@ -145,7 +146,8 @@ javacard {
             //noinspection GroovyAssignabilityCheck
             applet {
                 className 'applet.MainApplet'
-                aid '01:ff:ff:04:05:06:07:08:00:01:02'
+                aid '50:53:42:54:50:6f:6c:69:63:79:56:61:6c:2e:01:02'
+                //aid '01:ff:ff:04:05:06:07:08:00:01:02'
             }
 
             //noinspection GroovyAssignabilityCheck
