@@ -1,7 +1,7 @@
-# Policy-Based Validation of Bitcoin Transactions on Cryptographic Smartcards using JavaCard Template project with Gradle
+# Policy-Based Validation of Bitcoin Transactions on Cryptographic Smartcards 
+using JavaCard Template project with Gradle
 
-With the growth and global acceptance of Bitcoin as an electronic means of trade and the improvement of secure hardware in the last few decades, new opportunities opened in combining these technologies. This thesis presents such a new technology enhancing previous inventions with a policy-based approach. With the right policy palette available, this work is a first step to allowing an owner better control of his wealth. In this thesis, we managed to create a wide system of rules that accomplishes the goal set. The Smart Card is able to store a given rule (policy) and then validate whether the rules are satisfied based on uploaded Partially Signed Bitcoin Transactions and other data according to the given policy.
-
+With the growth and global acceptance of Bitcoin as an electronic means of trade and the improvement of secure hardware in the last few decades, new opportunities opened in combining these technologies. This thesis presents a new technology enhancing previous approaches with a policy-based validation. The focus is designing and implementing a simple yet powerful way to express conditions for validating and confirming cryptocurrency transactions performed by cryptographic smart cards. Therefore a comprehensive system of rules can be created and uploaded to the smart card. The smart card stores a given scheme, and afterward, it validates whether the rules are satisfied based on uploaded transactions and other data according to the given policy.
 ## Showcase 
 ```aidl
 ./gradlew run 
@@ -13,7 +13,7 @@ Runs a showcase. I recommend to look into the code base for better understanding
 - Clone this template repository:
 
 ```bash
-git clone --recursive https://github.com/ph4r05/javacard-gradle-template.git
+git clone --recursive https://github.com/jan-sekanina/PSBTPolicyValidatorApplet.git
 ```
 
 - Run Gradle wrapper `./gradlew` on Unix-like system or `./gradlew.bat` on Windows
@@ -45,14 +45,21 @@ Or inspect already installed applets:
 ```
 
 ## Running tests
-```
+```bash
 ./gradlew test --info --rerun-tasks
 ```
 
 
 ## Future Work
-I would like to implement a transaction signing and raw transaction serializing, with the possibility of using a key pairgenerated directly on the Card and the applet inscribing its own return addresses. Adding more new Atoms is something I see as the most probable as new ones are already coming to mind, for example, extended Signed Time Atom, which would increase the time needed by a given value each time validation would be satisfied. I could also imagine combining this applet with other secure hardware or bio-metric devices, if possible.
-
+The following steps building on this work could include implementing a
+transaction signing and raw transaction serializing, with the possibility
+of using a key pair generated directly on the Card and the applet
+inscribing its return addresses. Adding more new Atoms is something
+I see as the most probable as new ones are already coming to mind,
+for example, extended Signed Time Atom, which would increase the
+time needed by a given value each time validation would be satisfied. I
+could also imagine combining this applet with other secure hardware
+or bio-metric devices.
 ## Dependencies
 This project uses mainly:
 
