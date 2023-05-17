@@ -450,22 +450,6 @@ public class MainApplet extends Applet implements MultiSelectable {
         return true;
     }
 
-    private short validationReturnProcedure(short returnCode) {
-        // clears all publicly accessible storages after policy is checked
-        short i = 0;
-        short j = 0;
-        while (i < STORAGE_AMOUNT) {
-            while (j < STORAGE_SIZE) {
-                pubDataStorage[i].array[j] = (byte) 0; // deletes content
-                j++;
-            }
-            pubDataStorage[i].offset = 0; // deletes size
-            j = 0;
-            i++;
-        }
-        return returnCode;
-    }
-
     private void storageVanish() {
         // clears all publicly accessible storages
         short i = 0;
