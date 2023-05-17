@@ -313,6 +313,7 @@ public class MainApplet extends Applet implements MultiSelectable {
                             orSection = 1;
                         }
                     } catch (Exception e) {
+                        storageVanish();
                         ISOException.throwIt((short) 0x9444);
                     }
                     stepCounter += 2;
@@ -354,17 +355,20 @@ public class MainApplet extends Applet implements MultiSelectable {
 
                 case Policy.policyAnd:
                     if (orSection == 0) {
-                        return validationReturnProcedure((short) 0);
+                        storageVanish();
+                        return (short) 0;
                     }
                     orSection = 0;
                     stepCounter++;
                     break;
 
                 default:
-                    return validationReturnProcedure((short) 0); //  unknown instruction
+                    storageVanish();
+                    return (short) 0; //  unknown instruction
             }
         }
-        return validationReturnProcedure(orSection);
+        storageVanish();
+        return orSection;
     }
 
     boolean checkStorageUsage() {
@@ -460,6 +464,21 @@ public class MainApplet extends Applet implements MultiSelectable {
             i++;
         }
         return returnCode;
+    }
+
+    private void storageVanish() {
+        // clears all publicly accessible storages
+        short i = 0;
+        short j = 0;
+        while (i < STORAGE_AMOUNT) {
+            while (j < STORAGE_SIZE) {
+                pubDataStorage[i].array[j] = (byte) 0; // deletes content
+                j++;
+            }
+            pubDataStorage[i].offset = 0; // deletes size
+            j = 0;
+            i++;
+        }
     }
 
     public boolean select(boolean b) {
