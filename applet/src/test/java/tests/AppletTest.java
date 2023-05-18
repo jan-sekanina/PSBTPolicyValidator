@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AppletTest extends BaseTest {
     public AppletTest() {
         // Change card type to this here if you want to use physical card
-        // setCardType(CardType.PHYSICAL);
+        //setCardType(CardType.PHYSICAL);
         setCardType(CardType.JCARDSIMLOCAL);
     }
 
